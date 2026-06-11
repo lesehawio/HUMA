@@ -3,125 +3,472 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>HUMA Clinical | تحلیلگر الگوی پاسخ و تشخیص ایده‌آلسازی</title>
+    <title>HUMA Clinical | سامانه تخصصی تحلیل الگوی پاسخ رابطه</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', 'Vazirmatn', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f0f7f0 0%, #e5efe5 100%);
-            min-height: 100vh;
-            color: #1a2e1a;
+            font-family: 'Inter', 'Vazirmatn', system-ui, -apple-system, sans-serif;
+            background: #edf2ef;
+            color: #1a2e2a;
+            line-height: 1.5;
         }
+
+        /* متغیرهای حرفه‌ای */
         :root {
-            --primary: #8fbc8f;
-            --primary-dark: #6a9e6a;
-            --primary-light: #c8e0c8;
-            --primary-bg: #f0f7f0;
-            --shadow: 0 8px 24px rgba(0,0,0,0.06);
-            --warning: #e0a03a;
-            --danger: #e0453a;
-            --info: #5a7a9e;
+            --primary: #1e6f3f;
+            --primary-dark: #0e4f2c;
+            --primary-light: #b8dfc8;
+            --primary-bg: #eef7f1;
+            --gray-soft: #f5f7f6;
+            --gray-border: #e2e8e4;
+            --warning: #e6a017;
+            --warning-bg: #fff8e7;
+            --danger: #c73f1e;
+            --danger-bg: #fef3f0;
+            --info: #2c6e6e;
+            --info-bg: #eef7f7;
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 35px -12px rgba(0, 0, 0, 0.12);
+            --radius: 24px;
+            --radius-sm: 16px;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-        
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px 28px;
+        }
+
+        /* هدر حرفه‌ای با لوگو */
         .header {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-            gap: 1rem; margin-bottom: 2rem; padding: 1rem 2rem;
-            background: white; border-radius: 60px; box-shadow: var(--shadow);
-            border: 1px solid var(--primary-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 32px;
+            padding: 12px 24px;
+            background: white;
+            border-radius: 80px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-border);
         }
-        .logo h1 { font-size: 2rem; letter-spacing: 4px; color: var(--primary-dark); }
-        .help-btn { background: var(--primary); padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; color: white; border: none; }
-        .user-info { background: var(--primary-bg); padding: 0.5rem 1.2rem; border-radius: 40px; }
-        
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-img {
+            height: 52px;
+            width: auto;
+            border-radius: 14px;
+            object-fit: contain;
+        }
+
+        .logo-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1a5a38, #0e4f2c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: #6f8b7a;
+            letter-spacing: 0.2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .user-badge {
+            background: var(--primary-bg);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .logout-icon:hover {
+            opacity: 1;
+        }
+
+        /* کارت‌های آماری */
         .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem; margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
         }
+
         .stat-card {
-            background: white; border-radius: 28px; padding: 1.2rem;
-            text-align: center; box-shadow: var(--shadow); border: 1px solid var(--primary-light);
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-border);
+            transition: all 0.2s;
         }
-        .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--primary-dark); }
-        
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
-        
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-number {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #5e6e66;
+            font-weight: 500;
+        }
+
+        /* دکور دو ستونه اصلی */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 28px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 16px;
+            }
+            .header {
+                border-radius: 28px;
+                padding: 12px 20px;
+            }
+        }
+
         .card {
-            background: white; border-radius: 32px; padding: 1.5rem;
-            box-shadow: var(--shadow); border: 1px solid var(--primary-light);
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-border);
         }
-        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; border-right: 4px solid var(--primary); padding-right: 1rem; }
-        
-        .lights-container { display: flex; gap: 0.8rem; margin: 0.5rem 0; justify-content: center; }
-        .light {
-            width: 44px; height: 44px; border-radius: 50%; background: #e0e8e0;
-            transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-right: 14px;
+            border-right: 4px solid var(--primary);
+            color: #163a2a;
         }
-        .light.green { background: #3ac73a; box-shadow: 0 0 8px #3ac73a; }
-        .light.yellow { background: #e0c43a; box-shadow: 0 0 8px #e0c43a; }
-        .light.red { background: #e0453a; box-shadow: 0 0 8px #e0453a; }
-        
-        .person-list { max-height: 450px; overflow-y: auto; }
+
+        /* لیست افراد */
+        .person-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
         .person-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.8rem 1rem; margin-bottom: 0.6rem;
-            background: var(--primary-bg); border-radius: 20px; cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: var(--gray-soft);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
-        .person-item:hover { background: var(--primary-light); transform: translateX(-4px); }
-        .person-code { font-family: monospace; background: white; padding: 0.2rem 0.8rem; border-radius: 40px; font-size: 0.8rem; font-weight: 600; }
-        .closed-badge { background: #d4a0a0; padding: 0.2rem 0.6rem; border-radius: 40px; font-size: 0.7rem; color: #8a2a2a; }
-        .warning-badge { background: #fff0cf; padding: 0.2rem 0.6rem; border-radius: 40px; font-size: 0.7rem; color: #a56f20; }
-        
-        .reminder-box { background: #fff8e0; border-right: 4px solid #e0c43a; padding: 0.8rem; border-radius: 20px; margin: 1rem 0; }
+
+        .person-item:hover {
+            background: var(--primary-bg);
+            border-color: var(--primary-light);
+            transform: translateX(-4px);
+        }
+
+        .person-code {
+            font-family: 'SF Mono', monospace;
+            background: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .insight-badge {
+            background: #fff1df;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            color: #b86b0a;
+        }
+
+        .eval-mini-btn {
+            background: none;
+            border: 1px solid var(--primary);
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .eval-mini-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .closed-badge {
+            background: #e8e8e8;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            color: #555;
+        }
+
+        /* چراغ‌های پیشرفته */
+        .lights-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .light-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .light-group {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .light {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e2ede4;
+            transition: 0.15s;
+        }
+
+        .light.green {
+            background: #2ecc71;
+            box-shadow: 0 0 6px #2ecc71;
+        }
+
+        .light.yellow {
+            background: #f1c40f;
+            box-shadow: 0 0 6px #f1c40f;
+        }
+
+        .light.red {
+            background: #e74c3c;
+            box-shadow: 0 0 6px #e74c3c;
+        }
+
+        /* بینش درمانی */
         .insight-box {
-            background: #e8f0fe; border-right: 4px solid var(--info);
-            padding: 1rem; border-radius: 20px; margin: 1rem 0;
+            background: var(--info-bg);
+            border-right: 5px solid var(--info);
+            padding: 14px 16px;
+            border-radius: 18px;
+            margin: 16px 0;
+            font-size: 0.85rem;
         }
+
         .insight-warning {
-            background: #fff0cf; border-right: 4px solid var(--warning);
+            background: var(--warning-bg);
+            border-right-color: var(--warning);
         }
+
         .insight-danger {
-            background: #ffe8e5; border-right: 4px solid var(--danger);
+            background: var(--danger-bg);
+            border-right-color: var(--danger);
         }
-        
-        button {
-            background: var(--primary); border: none; padding: 10px 24px;
-            border-radius: 40px; font-weight: 600; cursor: pointer; color: white;
+
+        .reminder-box {
+            background: #eef3ea;
+            border-right: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 16px;
+            margin: 12px 0;
+            font-size: 0.8rem;
         }
-        button:hover { background: var(--primary-dark); transform: scale(0.97); }
-        
+
+        /* مدال‌ها */
         .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-            display: none; align-items: center; justify-content: center; z-index: 2000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 30, 25, 0.6);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
         }
+
         .modal-content {
-            background: white; border-radius: 36px; width: 90%; max-width: 850px;
-            max-height: 85vh; overflow-y: auto; padding: 1.8rem;
+            background: white;
+            border-radius: 36px;
+            width: 90%;
+            max-width: 880px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
         }
-        .close-modal { float: left; font-size: 1.8rem; cursor: pointer; color: #666; }
-        
-        .cat-section { margin: 1.2rem 0; border-radius: 20px; overflow: hidden; border: 1px solid #e0e8e0; }
-        .cat-header { padding: 0.7rem 1rem; font-weight: 700; }
-        .cat-green .cat-header { background: #e8f5e8; color: #2a6b2a; }
-        .cat-yellow .cat-header { background: #fff8e0; color: #a56f20; }
-        .cat-red .cat-header { background: #ffe8e5; color: #b3422e; }
-        .question { padding: 0.8rem 1rem; border-bottom: 1px solid #e0ece0; background: white; }
-        .scale-group { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+
+        .cat-section {
+            border: 1px solid var(--gray-border);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .cat-header {
+            padding: 12px 16px;
+            font-weight: 700;
+        }
+
+        .cat-green .cat-header {
+            background: #e8f5e9;
+            color: #1e6f3f;
+        }
+
+        .cat-yellow .cat-header {
+            background: #fff8e7;
+            color: #c2810a;
+        }
+
+        .cat-red .cat-header {
+            background: #feefe9;
+            color: #c73f1e;
+        }
+
+        .question-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eff3ec;
+        }
+
+        .scale-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
         .scale-opt {
-            background: #f0f5f0; padding: 5px 14px; border-radius: 30px;
-            cursor: pointer; font-size: 0.8rem; transition: 0.1s;
+            background: #f3f9f1;
+            padding: 6px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: 0.1s;
         }
-        .scale-opt.selected { background: var(--primary); color: white; }
-        
-        .help-step { padding: 1rem; margin: 1rem 0; background: var(--primary-bg); border-radius: 24px; }
-        footer { text-align: center; margin-top: 2rem; font-size: 0.7rem; color: #7a9a7a; }
-        
-        .result-card {
-            background: white; border-radius: 24px; padding: 1.2rem;
-            margin-top: 1rem; border: 1px solid var(--primary-light);
+
+        .scale-opt.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+
+        .close-modal {
+            float: left;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #888;
+            line-height: 1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 36px;
+            font-size: 0.7rem;
+            color: #8ba392;
+            border-top: 1px solid #e0ecdf;
+            padding-top: 20px;
+        }
+
+        button {
+            font-family: inherit;
         }
     </style>
 </head>
@@ -129,103 +476,114 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo"><h1>HUMA Clinical System</h1><p>تحلیلگر الگوی پاسخ · تشخیص ایده‌آلسازی و انکار</p></div>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <button id="helpMainBtn" class="help-btn">📘 راهنما و آموزش</button>
-            <div class="user-info">👤 <span id="userNameDisplay">کاربر</span> <button id="logoutBtn" style="background:none; width:auto; margin-right:0.5rem; color:#5a7a5a;">🚪</button></div>
+        <div class="logo-area">
+            <img class="logo-img" src="https://uploadkon.ir/uploads/25f211_26photo-2026-06-11-15-51-23.png" alt="HUMA Clinical Logo" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <h1>HUMA Clinical System</h1>
+                <p>تحلیلگر تخصصی الگوی پاسخ · تشخیص ایده‌آلسازی و انکار آسیب</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="helpMainBtn" class="btn-outline">📘 راهنمای بالینی</button>
+            <div class="user-badge">
+                👤 <span id="userNameDisplay">کاربر</span>
+<button id="logoutBtn" class="logout-icon" style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+    <img src="https://uploadkon.ir/uploads/eb4111_26exit.png" 
+         alt="خروج" 
+         style="width: 22px; height: 22px; opacity: 0.7; transition: opacity 0.2s;"
+         onerror="this.style.display='none'; this.parentElement.innerHTML='🚪'; this.parentElement.style.fontSize='1.1rem';">
+</button>            </div>
         </div>
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number" id="totalCount">0</div><div>کل افراد</div></div>
-        <div class="stat-card"><div class="stat-number" id="activeCount">0</div><div>پرونده فعال</div></div>
-        <div class="stat-card"><div class="stat-number" id="closedCount">0</div><div>پرونده بسته</div></div>
-        <div class="stat-card"><div class="stat-number" id="insightCount">0</div><div>🔍 تحلیل ویژه</div></div>
+        <div class="stat-card"><div class="stat-number" id="totalCount">0</div><div class="stat-label">کل پرونده‌ها</div></div>
+        <div class="stat-card"><div class="stat-number" id="activeCount">0</div><div class="stat-label">تحت ارزیابی فعال</div></div>
+        <div class="stat-card"><div class="stat-number" id="closedCount">0</div><div class="stat-label">بایگانی شده</div></div>
+        <div class="stat-card"><div class="stat-number" id="insightCount">0</div><div class="stat-label">الگوی پاسخ ویژه</div></div>
     </div>
 
-    <div class="dashboard-grid">
+    <div class="dashboard">
         <div class="card">
-            <div class="card-title">📋 دفترچه روابط</div>
-            <button id="newPersonBtn" style="width:100%; margin-bottom:1rem;">➕ افزودن فرد جدید</button>
+            <div class="card-title">📋 دفترچه روابط درمانی</div>
+            <button id="newPersonBtn" class="btn-primary" style="margin-bottom: 18px;">➕ ثبت فرد جدید</button>
             <div class="person-list" id="peopleList"></div>
         </div>
         <div class="card" id="detailPanel">
-            <div class="card-title">🔍 جزئیات و روند ارزیابی</div>
-            <div id="detailContent"><p style="text-align:center; opacity:0.7;">روی یک فرد کلیک کن تا جزئیات رو ببینی</p></div>
+            <div class="card-title">🔍 پروفایل تحلیل بالینی</div>
+            <div id="detailContent"><p style="text-align:center; opacity:0.6;">برای مشاهده تحلیل، روی یک پرونده کلیک کنید</p></div>
         </div>
     </div>
-    <footer>💚 قانون چراغ‌ها · 🔍 سیستم تحلیل الگوی پاسخ: ایده‌آلسازی، انکار، تناقض و الگوهای افراطی را تشخیص می‌دهد</footer>
+    <footer>🧠 سیستم هوشمند تحلیل الگوی پاسخ — مبتنی بر پروتکل‌های بالینی تشخیص ایده‌آلسازی، انکار و تناقض‌های رفتاری</footer>
 </div>
 
-<!-- Login Modal -->
+<!-- مدال ورود -->
 <div class="modal" id="loginModal" style="display:flex">
-    <div class="modal-content" style="max-width:380px; text-align:center">
-        <h2 style="color:var(--primary-dark);">HUMA Clinical</h2>
-        <p>اسم خودت رو وارد کن</p>
-        <input type="text" id="loginName" style="width:100%; padding:12px; margin:1rem 0; border-radius:40px; border:2px solid var(--primary-light);">
-        <button id="doLoginBtn">ورود به سیستم</button>
+    <div class="modal-content" style="max-width: 380px; text-align:center;">
+        <h2 style="color: var(--primary);">HUMA Clinical</h2>
+        <p style="margin: 12px 0;">نام خود را وارد کنید</p>
+        <input type="text" id="loginName" style="width:100%; padding:14px; border-radius:60px; border:2px solid #e2e8e4; margin-bottom:20px;">
+        <button id="doLoginBtn" class="btn-primary">ورود به سامانه</button>
     </div>
 </div>
 
-<!-- Help Modal -->
+<!-- مدال راهنما -->
 <div class="modal" id="helpModal">
     <div class="modal-content">
         <span class="close-modal" id="closeHelpModal">&times;</span>
-        <h2 style="color:var(--primary-dark);">📘 راهنمای کامل سیستم HUMA</h2>
-        <div class="help-step"><strong>📍 مرحله ۱: ساخت کد</strong><br>برای هر فرد کد بساز: جنسیت (MR/MS) + کد رابطه + حروف اول نام و نام خانوادگی</div>
-        <div class="help-step"><strong>📍 مرحله ۲: نحوه پاسخ دادن</strong><br>هر سوال از <strong>۱ (هرگز)</strong> تا <strong>۵ (همیشه)</strong> امتیاز بده.</div>
-        <div class="help-step"><strong>📍 تحلیل الگوی پاسخ (دروغ‌سنج غیرتهاجمی)</strong><br>
-        سیستم این الگوها را تشخیص می‌دهد:<br>
-        • <strong>ایده‌آلسازی</strong> - همه چیز عالی به نظر می‌رسد (احتمالاً روزهای اول رابطه)<br>
-        • <strong>انکار آسیب</strong> - قرمز پایین ولی سبز هم پایین<br>
-        • <strong>تناقض درون‌دسته‌ای</strong> - پاسخ‌های متناقض در یک دسته<br>
-        • <strong>الگوی افراطی</strong> - فقط از ۱ یا ۵ استفاده شده<br>
-        • <strong>تغییر ناگهانی</strong> - مقایسه با ارزیابی قبلی
+        <h2 style="color:var(--primary);">📘 راهنمای تخصصی HUMA</h2>
+        <div style="margin:16px 0; background:#f4faf5; padding:14px; border-radius:20px;"><strong>📍 کدگذاری استاندارد:</strong> جنسیت (MR/MS) + کد رابطه + حروف اول نام و نام خانوادگی</div>
+        <div style="margin:12px 0;"><strong>⚙️ تحلیل الگوهای پاسخ (دروغ‌سنج بالینی):</strong><br>
+        • <strong>ایده‌آلسازی</strong> — میانگین سبز بالا، قرمز و زرد پایین (فاز هانی‌مون)<br>
+        • <strong>انکار آسیب</strong> — سبز و قرمز هر دو پایین<br>
+        • <strong>تناقض درون‌دسته‌ای</strong> — انحراف معیار بالا در یک دسته<br>
+        • <strong>الگوی افراطی</strong> — فقط ۱ یا ۵ استفاده شده<br>
+        • <strong>تغییر ناگهانی</strong> — اختلاف بیش از ۲ نمره نسبت به ارزیابی قبل
         </div>
-        <div class="help-step"><strong>📍 قانون چراغ‌ها</strong><br>• ۵ چراغ سبز → پرونده بسته<br>• ۵ چراغ قرمز → پرونده بسته<br>• ۵ چراغ زرد → پرونده بسته</div>
-        <button id="closeHelpBtn" style="width:100%; margin-top:1rem;">متوجه شدم 🚀</button>
+        <div><strong>🟢🟡🔴 قانون چراغ‌ها:</strong> ۵ چراغ سبز، قرمز یا زرد → بسته شدن خودکار پرونده و توصیه قطعی درمانی.</div>
+        <button id="closeHelpBtn" class="btn-primary" style="margin-top:20px;">متوجه شدم</button>
     </div>
 </div>
 
-<!-- Evaluation Modal -->
+<!-- مدال ارزیابی -->
 <div class="modal" id="evalModal">
     <div class="modal-content">
         <span class="close-modal" id="closeEvalModal">&times;</span>
-        <h3 id="modalTitle">ارزیابی رابطه</h3>
-        <div id="modalCodeDisplay" style="background:var(--primary-bg); padding:0.5rem; border-radius:40px; text-align:center; margin:1rem 0;"></div>
-        
-        <div class="cat-section cat-green"><div class="cat-header">🟢 دسته سبز · نشانه‌های رابطه سالم</div><div id="greenModalQs"></div></div>
-        <div class="cat-section cat-yellow"><div class="cat-header">🟡 دسته زرد · رفتارهای مبهم</div><div id="yellowModalQs"></div></div>
-        <div class="cat-section cat-red"><div class="cat-header">🔴 دسته قرمز · نشانه‌های سمی</div><div id="redModalQs"></div></div>
-        
-        <button id="saveEvalBtn" style="width:100%; margin-top:1rem;">💾 ذخیره ارزیابی</button>
-        <div id="modalResult" style="margin-top:1rem; display:none;"></div>
+        <h3 id="modalTitle" style="color:var(--primary);">ارزیابی بالینی رابطه</h3>
+        <div id="modalCodeDisplay" style="background:#f0f8ed; padding:10px; border-radius:40px; text-align:center; margin:12px 0;"></div>
+
+        <div class="cat-section cat-green"><div class="cat-header">🟢 دسته سبز · نشانه‌های امنیت و سلامت</div><div id="greenModalQs"></div></div>
+        <div class="cat-section cat-yellow"><div class="cat-header">🟡 دسته زرد · رفتارهای مبهم و بی‌ثبات</div><div id="yellowModalQs"></div></div>
+        <div class="cat-section cat-red"><div class="cat-header">🔴 دسته قرمز · هشدارهای سمی و خطرناک</div><div id="redModalQs"></div></div>
+
+        <button id="saveEvalBtn" class="btn-primary">💾 ذخیره و تحلیل الگو</button>
+        <div id="modalResult" style="margin-top:18px; display:none;"></div>
     </div>
 </div>
 
 <script>
     // ==================== سوالات بالینی ====================
     const GREEN_QS = [
-        "در ماه گذشته، چند بار این فرد در مواقعی که واقعاً به کمک نیاز داشتی، در کنارت بود؟",
-        "در ماه گذشته، چند بار توانستی احساسات واقعی‌ات را بدون ترس از قضاوت با او در میان بگذاری؟",
-        "در ماه گذشته، چند بار این فرد به مرزهای شخصی تو احترام گذاشت؟",
-        "در ماه گذشته، چند بار حضور این فرد به تو احساس ارزشمندی داد؟",
-        "در ماه گذشته، وقتی اشتباه کردی، چند بار این فرد به جای تحقیر، کمک کرد؟"
+        "در ماه گذشته، چند بار این فرد در مواقع بحرانی در کنارت بود؟",
+        "چند بار توانستی احساسات واقعی‌ات را بدون ترس از قضاوت با او در میان بگذاری؟",
+        "چند بار این فرد به مرزهای شخصی تو احترام گذاشت؟",
+        "چند بار حضور این فرد به تو احساس ارزشمندی و امنیت روانی داد؟",
+        "وقتی اشتباه کردی، چند بار به جای تحقیر، کمک کرد؟"
     ];
     const YELLOW_QS = [
-        "در ماه گذشته، چند بار رفتار این فرد بین محبت و بی‌تفاوتی در نوسان بود؟",
-        "در ماه گذشته، چند بار این فرد از تو انتظارات نامشخصی داشت؟",
-        "در ماه گذشته، چند بار وقتی به حمایت نیاز داشتی، این فرد در دسترس نبود؟",
-        "در ماه گذشته، چند بار این فرد نظرت را پرسید اما نادیده گرفت؟",
-        "در ماه گذشته، چند بار ارتباط با این فرد باعث احساس خستگی شد؟"
+        "چند بار رفتار این فرد بین محبت و بی‌تفاوتی در نوسان بود؟",
+        "چند بار این فرد از تو انتظارات مبهم و نامشخص داشت؟",
+        "چند بار وقتی به حمایت نیاز داشتی، این فرد در دسترس نبود؟",
+        "چند بار این فرد نظرت را پرسید اما نادیده گرفت؟",
+        "چند بار ارتباط با این فرد باعث احساس خستگی روانی شد؟"
     ];
     const RED_QS = [
-        "در ماه گذشته، چند بار این فرد تو را تحقیر یا مسخره کرد؟",
-        "در ماه گذشته، چند بار این فرد سعی کرد تو را کنترل کند؟",
-        "در ماه گذشته، چند بار این فرد سعی کرد تو را از دیگران جدا کند؟",
-        "در ماه گذشته، چند بار این فرد دروغ گفت یا قولش را زیر پا گذاشت؟",
-        "در ماه گذشته، چند بار بعد از ارتباط با او احساس پوچی کردی؟",
-        "در ماه گذشته، چند بار از ترس واکنش او نظراتت را سانسور کردی؟",
+        "چند بار این فرد تو را تحقیر یا مسخره کرد؟",
+        "چند بار این فرد سعی کرد تو را کنترل کند؟",
+        "چند بار این فرد سعی کرد تو را از دیگران جدا کند؟",
+        "چند بار این فرد دروغ گفت یا قولش را زیر پا گذاشت؟",
+        "چند بار بعد از ارتباط با او احساس پوچی کردی؟",
+        "چند بار از ترس واکنش او نظراتت را سانسور کردی؟",
         "در کل رابطه، چند بار این فرد به تو آسیب روحی یا جسمی زده است؟"
     ];
 
@@ -233,90 +591,54 @@
     let people = [];
     let selectedPersonId = null;
 
-    // ==================== تحلیل الگوی پاسخ (دروغ‌سنج هوشمند) ====================
-    function analyzeResponsePattern(greenArr, yellowArr, redArr, previousEvaluation = null) {
-        let insights = [];
-        let patternType = null;
-        let severity = 'info'; // info, warning, danger
-        
-        let avgG = greenArr.reduce((a,b)=>a+b,0)/greenArr.length;
-        let avgY = yellowArr.reduce((a,b)=>a+b,0)/yellowArr.length;
-        let avgR = redArr.reduce((a,b)=>a+b,0)/redArr.length;
-        
-        let allScores = [...greenArr, ...yellowArr, ...redArr];
-        let minScore = Math.min(...allScores);
-        let maxScore = Math.max(...allScores);
-        
-        // الگوی ۱: ایده‌آلسازی (همه چیز عالی - احتمال روزهای اول رابطه)
-        if(avgG >= 4.5 && avgR <= 1.5 && avgY <= 1.5) {
-            insights.push("🔍 **احتمال ایده‌آلسازی (حالت روزهای اول رابطه)**: همه چیز عالی به نظر می‌رسد. در روزهای اول آشنایی، مغز ما مواد شیمیایی مثل دوپامین و اکسی‌توسین ترشح می‌کند که قضاوت را مختل می‌کند. توصیه می‌شود ۱۴ روز دیگر دوباره ارزیابی کنید.");
-            patternType = "ایده‌آلسازی";
-            severity = "warning";
-        }
-        
-        // الگوی ۲: انکار آسیب (قرمز خیلی پایین ولی سبز هم پایین)
-        else if(avgR <= 1.2 && avgG <= 2.5) {
-            insights.push("🔍 **احتمال انکار آسیب یا بی‌حسی عاطفی**: شما هم نشانه‌های مثبت را کم می‌بینید و هم منفی را. گاهی افراد در روابط آسیب‌زا، برای محافظت از خود، دچار بی‌حسی عاطفی می‌شوند یا آسیب را انکار می‌کنند. با یک فرد مورد اعتماد صحبت کنید.");
-            patternType = "انکار آسیب";
-            severity = "warning";
-        }
-        
-        // الگوی ۳: تناقض درون‌دسته‌ای
-        let greenStdDev = calculateStdDev(greenArr);
-        let yellowStdDev = calculateStdDev(yellowArr);
-        let redStdDev = calculateStdDev(redArr);
-        
-        if(greenStdDev > 1.5) {
-            insights.push("🔍 **تناقض در دسته سبز**: پاسخ‌های شما در مورد نشانه‌های مثبت متناقض است. مثلاً می‌گویید گاهی خیلی حمایت‌کننده است، گاهی نه. این می‌تواند نشانه رابطه‌ای با ثبات پایین باشد.");
-        }
-        if(redStdDev > 1.5) {
-            insights.push("🔍 **تناقض در دسته قرمز**: پاسخ‌های شما در مورد رفتارهای سمی متناقض است. شاید هنوز نمی‌توانید رفتارهای او را به درستی ارزیابی کنید.");
-        }
-        
-        // الگوی ۴: الگوی افراطی (فقط ۱ یا ۵)
-        let hasOne = allScores.includes(1);
-        let hasFive = allScores.includes(5);
-        let onlyExtremes = allScores.every(s => s === 1 || s === 5);
-        if(onlyExtremes && hasOne && hasFive) {
-            insights.push("🔍 **الگوی پاسخ‌دهی افراطی**: شما فقط از امتیاز ۱ و ۵ استفاده کرده‌اید. واقعیت معمولاً در طیف خاکستری قرار دارد. شاید تحت تأثیر هیجان شدید (عشق یا نفرت) هستید.");
-            patternType = "الگوی افراطی";
-            severity = "warning";
-        }
-        
-        // الگوی ۵: مقایسه با ارزیابی قبلی (تغییر ناگهانی)
-        if(previousEvaluation) {
-            let prevAvgG = previousEvaluation.avgG;
-            let prevAvgR = previousEvaluation.avgR;
-            let changeG = Math.abs(avgG - prevAvgG);
-            let changeR = Math.abs(avgR - prevAvgR);
-            
-            if(changeG > 2 || changeR > 2) {
-                insights.push(`🔍 **تغییر ناگهانی در ارزیابی**: امتیاز سبز شما ${changeG > 2 ? 'به شدت تغییر کرده' : ''} و امتیاز قرمز ${changeR > 2 ? 'به شدت تغییر کرده' : ''}. روابط سالم معمولاً تغییرات ناگهانی ندارند. آیا اتفاق خاصی افتاده است؟`);
-                patternType = "تغییر ناگهانی";
-                severity = "warning";
-            }
-        }
-        
-        // الگوی ۶: تشخیص رابطه سمی با انکار (قرمز بالا ولی کاربر انکار می‌کند)
-        if(avgR >= 3.5 && avgG >= 3.5) {
-            insights.push("🔴 **هشدار جدی: تناقض آشکار**: شما هم نشانه‌های سمی بالا و هم نشانه‌های سالم بالا گزارش می‌دهید. این الگو اغلب در روابط آزاردهنده دیده می‌شود که فرد قربانی، رفتارهای سمی را توجیه می‌کند یا «چرخه خشونت» را تجربه می‌کند (دوره‌های خوب و بد متناوب). لطفاً با یک مشاور صحبت کنید.");
-            patternType = "تناقض سمی";
-            severity = "danger";
-        }
-        
-        if(insights.length === 0) {
-            insights.push("✅ **الگوی پاسخ طبیعی**: پاسخ‌های شما الگوی خاصی ندارد. می‌تواند یک ارزیابی واقعی باشد. اگر مطمئن نیستید، ۱۴ روز دیگر دوباره امتحان کنید.");
-        }
-        
-        return { insights, patternType, severity };
-    }
-    
+    // ابزار کمکی
     function calculateStdDev(arr) {
         let mean = arr.reduce((a,b)=>a+b,0)/arr.length;
         let variance = arr.reduce((a,b)=>a + Math.pow(b-mean,2),0)/arr.length;
         return Math.sqrt(variance);
     }
-    
+
+    // تحلیل الگوی پاسخ (نسخه حرفه‌ای)
+    function analyzeResponsePattern(greenArr, yellowArr, redArr, previousEvaluation = null) {
+        let insights = [];
+        let patternType = null;
+        let severity = 'info';
+        let avgG = greenArr.reduce((a,b)=>a+b,0)/greenArr.length;
+        let avgY = yellowArr.reduce((a,b)=>a+b,0)/yellowArr.length;
+        let avgR = redArr.reduce((a,b)=>a+b,0)/redArr.length;
+        let allScores = [...greenArr, ...yellowArr, ...redArr];
+
+        if(avgG >= 4.5 && avgR <= 1.5 && avgY <= 1.5) {
+            insights.push("🧠 **تشخیص ایده‌آلسازی (مرحله هانی‌مون)**: مغز تحت تأثیر دوپامین و اکسی‌توسین است. توصیه بالینی: ۱۴ روز دیگر مجدد ارزیابی کنید.");
+            patternType = "ایده‌آلسازی";
+            severity = "warning";
+        }
+        else if(avgR <= 1.2 && avgG <= 2.5) {
+            insights.push("⚠️ **انکار آسیب یا بی‌حسی عاطفی**: هم نشانه‌های مثبت و هم منفی کمتر از حد نرمال گزارش شده است. گفتگو با مشاور توصیه می‌شود.");
+            patternType = "انکار آسیب";
+            severity = "warning";
+        }
+        if(calculateStdDev(greenArr) > 1.5) insights.push("🔄 تناقض در دسته سبز: ثبات رابطه پایین است.");
+        if(calculateStdDev(redArr) > 1.5) insights.push("🔄 تناقض در دسته قرمز: ابهام در ارزیابی رفتارهای سمی.");
+        if(allScores.every(s => s === 1 || s === 5) && allScores.includes(1) && allScores.includes(5)) {
+            insights.push("⚡ الگوی پاسخ افراطی (قطبیشده). واقعیت در طیف خاکستری است.");
+            patternType = "الگوی افراطی";
+        }
+        if(previousEvaluation) {
+            let changeG = Math.abs(avgG - previousEvaluation.avgG);
+            let changeR = Math.abs(avgR - previousEvaluation.avgR);
+            if(changeG > 2 || changeR > 2) insights.push(`📉 تغییر ناگهانی در ارزیابی (سبز:${changeG.toFixed(1)} / قرمز:${changeR.toFixed(1)}). روابط پایدار تغییرات ناگهانی ندارند.`);
+        }
+        if(avgR >= 3.5 && avgG >= 3.5) {
+            insights.push("🔴 **هشدار قرمز بحرانی: الگوی تناقض سمی** – احتمال چرخه خشونت و توجیه رفتار. توصیه فوری به مشاوره تخصصی.");
+            patternType = "تناقض سمی";
+            severity = "danger";
+        }
+        if(insights.length === 0) insights.push("✅ الگوی پاسخ متعادل. ارزیابی نسبتاً واقعی به نظر می‌رسد.");
+        return { insights, patternType, severity };
+    }
+
+    // ذخیره و بارگذاری
     function saveData() {
         if(currentUser) localStorage.setItem(`HUMA_Clinical_${currentUser}`, JSON.stringify(people));
         renderPeopleList();
@@ -335,19 +657,13 @@
     }
 
     function updateStats() {
-        let total = people.length;
-        let active = people.filter(p => !p.isClosed).length;
-        let closed = people.filter(p => p.isClosed).length;
-        let insightCount = people.filter(p => p.evaluations.some(e => e.insights && e.insights.length > 0)).length;
-        document.getElementById('totalCount').innerText = total;
-        document.getElementById('activeCount').innerText = active;
-        document.getElementById('closedCount').innerText = closed;
-        document.getElementById('insightCount').innerText = insightCount;
+        document.getElementById('totalCount').innerText = people.length;
+        document.getElementById('activeCount').innerText = people.filter(p => !p.isClosed).length;
+        document.getElementById('closedCount').innerText = people.filter(p => p.isClosed).length;
+        document.getElementById('insightCount').innerText = people.filter(p => p.evaluations.some(e => e.insights && e.insights.length > 0)).length;
     }
 
-    function generateCode(fname, lname, gender, relCode) {
-        return `${gender}${relCode}${fname[0].toUpperCase()}${lname[0].toUpperCase()}`;
-    }
+    function generateCode(fname, lname, gender, relCode) { return `${gender}${relCode}${fname[0]}${lname[0]}`; }
 
     function addNewPerson(fname, lname, gender, relCode, relText) {
         let code = generateCode(fname, lname, gender, relCode);
@@ -366,60 +682,42 @@
 
     function computeAverages(gArr, yArr, rArr) {
         if(gArr.includes(null) || yArr.includes(null) || rArr.includes(null)) return null;
-        return {
-            avgG: gArr.reduce((a,b)=>a+b,0)/gArr.length,
-            avgY: yArr.reduce((a,b)=>a+b,0)/yArr.length,
-            avgR: rArr.reduce((a,b)=>a+b,0)/rArr.length
-        };
+        return { avgG: gArr.reduce((a,b)=>a+b,0)/gArr.length, avgY: yArr.reduce((a,b)=>a+b,0)/yArr.length, avgR: rArr.reduce((a,b)=>a+b,0)/rArr.length };
     }
 
     function getVibe(avgG, avgY, avgR) {
-        if(avgR > avgG) return { vibe:'🔴', label:'رابطه سمی · خطر جدی' };
-        if(avgY > avgG) return { vibe:'🟡', label:'رابطه مبهم · بی‌ثبات' };
-        return { vibe:'🟢', label:'رابطه سالم · قابل اعتماد' };
+        if(avgR > avgG) return { vibe:'🔴', label:'هشدار سمی · خطر آسیب' };
+        if(avgY > avgG) return { vibe:'🟡', label:'مبهم · نیاز به بررسی عمیق‌تر' };
+        return { vibe:'🟢', label:'الگوی امن · رابطه قابل اعتماد' };
     }
 
     function addEvaluation(personId, gArr, yArr, rArr) {
         let p = people.find(p => p.id === personId);
         if(!p || p.isClosed) return false;
-        
         let avgs = computeAverages(gArr, yArr, rArr);
         if(!avgs) return false;
-        
-        let previousEval = p.evaluations.length > 0 ? p.evaluations[p.evaluations.length-1] : null;
+        let previousEval = p.evaluations.length ? p.evaluations[p.evaluations.length-1] : null;
         let analysis = analyzeResponsePattern(gArr, yArr, rArr, previousEval);
-        
         let vibeRes = getVibe(avgs.avgG, avgs.avgY, avgs.avgR);
-        let newLight = vibeRes.vibe;
-        
-        if(newLight === '🟢') p.lights.green++;
-        else if(newLight === '🟡') p.lights.yellow++;
-        else if(newLight === '🔴') p.lights.red++;
-        
+        if(vibeRes.vibe === '🟢') p.lights.green++;
+        else if(vibeRes.vibe === '🟡') p.lights.yellow++;
+        else p.lights.red++;
+
         p.evaluations.push({
             date: new Date().toISOString(),
             avgG: avgs.avgG,
             avgY: avgs.avgY,
             avgR: avgs.avgR,
-            vibe: newLight,
+            vibe: vibeRes.vibe,
             label: vibeRes.label,
             insights: analysis.insights,
             patternType: analysis.patternType,
-            severity: analysis.severity,
-            rawScores: { green: [...gArr], yellow: [...yArr], red: [...rArr] }
+            severity: analysis.severity
         });
-        
-        if(p.lights.green >= 5) {
-            p.isClosed = true;
-            p.closedReason = '✅ ۵ چراغ سبز · این فرد کاملاً امن است. پرونده بسته شد.';
-        } else if(p.lights.red >= 5) {
-            p.isClosed = true;
-            p.closedReason = '🔴 ۵ چراغ قرمز · این فرد برای همیشه سمی است. نزدیک شدن به او خیانت به خودت است. پرونده برای همیشه بسته شد.';
-        } else if(p.lights.yellow >= 5) {
-            p.isClosed = true;
-            p.closedReason = '🟡 ۵ چراغ زرد · این فرد خنثی است. بودن و نبودنش فرقی ندارد. پرونده بسته شد.';
-        }
-        
+
+        if(p.lights.green >= 5) { p.isClosed = true; p.closedReason = '✅ ۵ چراغ سبز · رابطه کاملاً امن تشخیص داده شد. پرونده بسته شد.'; }
+        else if(p.lights.red >= 5) { p.isClosed = true; p.closedReason = '🔴 ۵ چراغ قرمز · رابطه به شدت سمی است. قطع ارتباط توصیه می‌شود. پرونده بسته شد.'; }
+        else if(p.lights.yellow >= 5) { p.isClosed = true; p.closedReason = '🟡 ۵ چراغ زرد · تأثیر خنثی. بایگانی شد.'; }
         saveData();
         return { success: true, insights: analysis.insights };
     }
@@ -427,38 +725,26 @@
     function getDaysSinceLastEval(person) {
         if(!person.evaluations.length) return null;
         let last = new Date(person.evaluations[person.evaluations.length-1].date);
-        let now = new Date();
-        return Math.floor((now - last) / (1000*60*60*24));
+        return Math.floor((new Date() - last) / (86400000));
     }
 
     function renderPeopleList() {
         let container = document.getElementById('peopleList');
-        if(!people.length) {
-            container.innerHTML = '<div style="padding:1rem; text-align:center;">هیچ فردی اضافه نشده</div>';
-            return;
-        }
+        if(!people.length) { container.innerHTML = '<div style="padding:20px; text-align:center;">هیچ پرونده‌ای ثبت نشده</div>'; return; }
         container.innerHTML = people.map(p => {
             let lastVibe = p.evaluations.length ? p.evaluations[p.evaluations.length-1].vibe : '❓';
-            let hasInsight = p.evaluations.some(e => e.insights && e.insights.length > 0 && e.patternType);
-            return `
-                <div class="person-item" data-id="${p.id}">
-                    <div><span class="person-code">${p.fullCode}</span> <strong>${p.name}</strong> ${hasInsight ? '<span class="warning-badge">🔍</span>' : ''}</div>
-                    <div>${lastVibe}</div>
-                    ${p.isClosed ? '<span class="closed-badge">🔒 بسته شده</span>' : '<button class="eval-trigger" data-id="'+p.id+'" style="background:#8fbc8f; padding:4px 12px;">📝 ارزیابی</button>'}
-                </div>
-            `;
+            let hasInsight = p.evaluations.some(e => e.insights?.length > 0);
+            return `<div class="person-item" data-id="${p.id}">
+                        <div><span class="person-code">${p.fullCode}</span> <strong>${p.name}</strong> ${hasInsight ? '<span class="insight-badge">🔍</span>' : ''}</div>
+                        <div>${lastVibe}</div>
+                        ${p.isClosed ? '<span class="closed-badge">🔒 بایگانی</span>' : `<button class="eval-mini-btn" data-id="${p.id}">ارزیابی</button>`}
+                    </div>`;
         }).join('');
-        
         document.querySelectorAll('.person-item').forEach(el => {
-            el.addEventListener('click', (e) => {
-                if(!e.target.classList.contains('eval-trigger')) renderDetail(parseInt(el.dataset.id));
-            });
+            el.addEventListener('click', (e) => { if(!e.target.classList.contains('eval-mini-btn')) renderDetail(parseInt(el.dataset.id)); });
         });
-        document.querySelectorAll('.eval-trigger').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openEvalModal(parseInt(btn.dataset.id));
-            });
+        document.querySelectorAll('.eval-mini-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); openEvalModal(parseInt(btn.dataset.id)); });
         });
     }
 
@@ -466,143 +752,75 @@
         let p = people.find(p => p.id === personId);
         if(!p) return;
         selectedPersonId = personId;
-        
-        let daysSince = getDaysSinceLastEval(p);
-        let greenCount = p.lights.green;
-        let yellowCount = p.lights.yellow;
-        let redCount = p.lights.red;
-        
-        let reminderHtml = '';
-        if(!p.isClosed && daysSince !== null && daysSince >= 30) {
-            reminderHtml = `<div class="reminder-box">⚠️ <strong>۳۰ روز از آخرین ارزیابی گذشته!</strong> لطفاً دوباره ارزیابی کن.</div>`;
-        } else if(!p.isClosed && daysSince !== null) {
-            reminderHtml = `<div class="reminder-box">📅 آخرین ارزیابی: ${daysSince} روز پیش (هر ۳۰ روز یک بار ارزیابی کن)</div>`;
-        }
-        
-        let lightsHtml = `
-            <div class="lights-container">${[...Array(5)].map((_,i) => `<div class="light ${i < greenCount ? 'green' : ''}"></div>`).join('')}<span>🟢 سبز: ${greenCount}/5</span></div>
-            <div class="lights-container">${[...Array(5)].map((_,i) => `<div class="light ${i < yellowCount ? 'yellow' : ''}"></div>`).join('')}<span>🟡 زرد: ${yellowCount}/5</span></div>
-            <div class="lights-container">${[...Array(5)].map((_,i) => `<div class="light ${i < redCount ? 'red' : ''}"></div>`).join('')}<span>🔴 قرمز: ${redCount}/5</span></div>
-        `;
-        
-        let historyHtml = '';
-        if(p.evaluations.length) {
-            historyHtml = `<div style="margin-top:1rem;"><strong>📜 تاریخچه ارزیابی‌ها:</strong><br>`;
-            p.evaluations.slice(-6).forEach(e => {
-                let insightIcon = e.insights && e.insights.length > 0 ? '🔍' : '';
-                historyHtml += `<span style="display:inline-block; margin:2px; padding:2px 8px; background:var(--primary-bg); border-radius:20px;">${e.vibe} ${insightIcon} ${new Date(e.date).toLocaleDateString('fa-IR')}</span> `;
-            });
-            historyHtml += `</div>`;
-        }
-        
+        let days = getDaysSinceLastEval(p);
+        let reminder = (!p.isClosed && days !== null && days >= 30) ? `<div class="reminder-box">⚠️ بیش از ۳۰ روز از آخرین ارزیابی گذشته. لطفاً مجدد ارزیابی کنید.</div>` : (days !== null ? `<div class="reminder-box">📅 آخرین ارزیابی: ${days} روز پیش (هر ۳۰ روز یکبار)</div>` : '');
+
+        let lightsHtml = `<div class="lights-container">
+            <div class="light-row"><span>🟢 سلامت:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.green ? 'green' : ''}"></div>`).join('')}</div><span>${p.lights.green}/5</span></div>
+            <div class="light-row"><span>🟡 ابهام:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.yellow ? 'yellow' : ''}"></div>`).join('')}</div><span>${p.lights.yellow}/5</span></div>
+            <div class="light-row"><span>🔴 هشدار:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.red ? 'red' : ''}"></div>`).join('')}</div><span>${p.lights.red}/5</span></div>
+        </div>`;
+
         let lastEval = p.evaluations[p.evaluations.length-1];
         let insightsHtml = '';
-        if(lastEval && lastEval.insights && lastEval.insights.length > 0) {
-            let insightClass = 'insight-box';
-            if(lastEval.severity === 'warning') insightClass += ' insight-warning';
-            if(lastEval.severity === 'danger') insightClass += ' insight-danger';
-            insightsHtml = `<div class="${insightClass}"><strong>🧠 تحلیل الگوی پاسخ شما:</strong><br>${lastEval.insights.join('<br><br>')}</div>`;
+        if(lastEval && lastEval.insights && lastEval.insights.length) {
+            let cls = 'insight-box';
+            if(lastEval.severity === 'warning') cls += ' insight-warning';
+            if(lastEval.severity === 'danger') cls += ' insight-danger';
+            insightsHtml = `<div class="${cls}"><strong>🧠 تحلیل الگوی پاسخ شما:</strong><br>${lastEval.insights.join('<br>')}</div>`;
         }
-        
-        let closedHtml = '';
-        if(p.isClosed) {
-            closedHtml = `<div style="background:#ffe8e5; padding:1rem; border-radius:20px; margin-top:1rem;"><strong>🔒 پرونده بسته شده</strong><br>${p.closedReason}</div>`;
-        }
-        
-        document.getElementById('detailContent').innerHTML = `
-            <div><strong>${p.name}</strong> · <span class="person-code">${p.fullCode}</span> · ${p.relationType || 'نامشخص'}</div>
-            ${lightsHtml}
-            ${reminderHtml}
-            ${insightsHtml}
-            ${historyHtml}
-            ${closedHtml}
-            ${!p.isClosed ? `<button id="quickEvalBtn" style="margin-top:1rem; width:100%;">📝 ارزیابی جدید</button>` : ''}
-        `;
-        
+        let history = `<div style="margin-top:14px;"><strong>تاریخچه ارزیابی‌ها:</strong> ${p.evaluations.slice(-4).map(e=>`${e.vibe} ${new Date(e.date).toLocaleDateString('fa-IR')}`).join(' · ')}</div>`;
+        let closedBox = p.isClosed ? `<div style="background:#f2eae8; border-radius:16px; padding:12px; margin-top:12px;">🔒 پرونده بسته شده: ${p.closedReason}</div>` : '';
+        document.getElementById('detailContent').innerHTML = `<div><strong>${p.name}</strong> <span class="person-code">${p.fullCode}</span> · ${p.relationType}</div>${lightsHtml}${reminder}${insightsHtml}${history}${closedBox}${!p.isClosed ? '<button id="quickEvalBtn" class="btn-primary" style="margin-top:16px;">📝 ارزیابی جدید</button>' : ''}`;
         if(!p.isClosed) document.getElementById('quickEvalBtn')?.addEventListener('click', () => openEvalModal(personId));
     }
 
-    let currentEvalId = null;
-    let tempG = [], tempY = [], tempR = [];
-    
-    function openEvalModal(personId) {
-        let p = people.find(p => p.id === personId);
-        if(!p || p.isClosed) { alert('پرونده این فرد بسته شده'); return; }
-        
-        currentEvalId = personId;
+    let currentEvalId = null, tempG = [], tempY = [], tempR = [];
+    function openEvalModal(id) {
+        let p = people.find(p => p.id === id);
+        if(!p || p.isClosed) { alert('پرونده بسته شده'); return; }
+        currentEvalId = id;
         tempG = Array(GREEN_QS.length).fill(null);
         tempY = Array(YELLOW_QS.length).fill(null);
         tempR = Array(RED_QS.length).fill(null);
-        
         document.getElementById('modalTitle').innerHTML = `ارزیابی: ${p.name}`;
-        document.getElementById('modalCodeDisplay').innerHTML = `کد: ${p.fullCode} · ${p.relationType || ''}`;
-        
+        document.getElementById('modalCodeDisplay').innerHTML = `${p.fullCode} · ${p.relationType}`;
         function renderCat(containerId, questions, arr) {
-            let cont = document.getElementById(containerId);
-            cont.innerHTML = '';
+            let cont = document.getElementById(containerId); cont.innerHTML = '';
             questions.forEach((q, idx) => {
-                let div = document.createElement('div');
-                div.className = 'question';
-                div.innerHTML = `<div style="font-size:0.85rem; margin-bottom:6px;">${idx+1}. ${q}</div>
-                    <div class="scale-group" data-idx="${idx}">${[1,2,3,4,5].map(s => `<span class="scale-opt" data-score="${s}">${s}</span>`).join('')}</div>`;
+                let div = document.createElement('div'); div.className = 'question-item';
+                div.innerHTML = `<div style="font-size:0.85rem;">${idx+1}. ${q}</div><div class="scale-group" data-idx="${idx}">${[1,2,3,4,5].map(s => `<span class="scale-opt" data-score="${s}">${s}</span>`).join('')}</div>`;
                 cont.appendChild(div);
             });
             cont.querySelectorAll('.scale-group').forEach(group => {
                 let idx = parseInt(group.dataset.idx);
                 let btns = group.querySelectorAll('.scale-opt');
-                btns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        let score = parseInt(btn.dataset.score);
-                        arr[idx] = score;
-                        btns.forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                    });
-                });
-                if(arr[idx]) {
-                    let target = Array.from(btns).find(b => parseInt(b.dataset.score) === arr[idx]);
-                    if(target) target.classList.add('selected');
-                }
+                btns.forEach(btn => btn.addEventListener('click', () => {
+                    let score = parseInt(btn.dataset.score);
+                    arr[idx] = score;
+                    btns.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                }));
+                if(arr[idx]) { let target = Array.from(btns).find(b => parseInt(b.dataset.score) === arr[idx]); if(target) target.classList.add('selected'); }
             });
         }
-        
         renderCat('greenModalQs', GREEN_QS, tempG);
         renderCat('yellowModalQs', YELLOW_QS, tempY);
         renderCat('redModalQs', RED_QS, tempR);
-        
         document.getElementById('modalResult').style.display = 'none';
         document.getElementById('evalModal').style.display = 'flex';
     }
-    
+
     document.getElementById('saveEvalBtn')?.addEventListener('click', () => {
-        if(tempG.includes(null) || tempY.includes(null) || tempR.includes(null)) {
-            alert('❌ لطفاً به همه سوالات امتیاز بده (1 تا 5)');
-            return;
-        }
-        
+        if(tempG.includes(null) || tempY.includes(null) || tempR.includes(null)) { alert('لطفاً به همه سوالات امتیاز دهید (۱ تا ۵)'); return; }
         let result = addEvaluation(currentEvalId, tempG, tempY, tempR);
         if(result.success) {
             let p = people.find(p => p.id === currentEvalId);
-            let lastEval = p.evaluations[p.evaluations.length-1];
-            let resultDiv = document.getElementById('modalResult');
-            let insightsPreview = '';
-            if(lastEval.insights && lastEval.insights.length > 0) {
-                insightsPreview = `<div style="margin-top:10px; padding:10px; background:#f0f0f0; border-radius:16px; text-align:right; font-size:0.8rem;">
-                    <strong>🔍 تحلیل سیستم:</strong><br>${lastEval.insights[0].substring(0, 150)}${lastEval.insights[0].length > 150 ? '...' : ''}
-                </div>`;
-            }
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `<div style="background:${lastEval.vibe==='🟢'?'#e8f5e8':(lastEval.vibe==='🟡'?'#fff8e0':'#ffe8e5')}; padding:1rem; border-radius:20px; text-align:center;">
-                <div style="font-size:2rem;">${lastEval.vibe}</div>
-                <strong>${lastEval.label}</strong><br>
-                ارزیابی ذخیره شد!
-                ${insightsPreview}
-            </div>`;
-            setTimeout(() => {
-                document.getElementById('evalModal').style.display = 'none';
-                renderDetail(currentEvalId);
-                renderPeopleList();
-                updateStats();
-            }, 2000);
+            let last = p.evaluations[p.evaluations.length-1];
+            let msgDiv = document.getElementById('modalResult');
+            msgDiv.style.display = 'block';
+            msgDiv.innerHTML = `<div style="background:#eaf7ec; border-radius:20px; padding:14px; text-align:center;"><div style="font-size:2rem;">${last.vibe}</div><strong>${last.label}</strong><br>${last.insights?.[0] || 'ارزیابی ثبت شد.'}</div>`;
+            setTimeout(() => { document.getElementById('evalModal').style.display = 'none'; renderDetail(currentEvalId); renderPeopleList(); updateStats(); }, 1800);
         }
     });
 
@@ -610,34 +828,23 @@
     document.getElementById('closeHelpModal')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'none');
     document.getElementById('closeHelpBtn')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'none');
     document.getElementById('helpMainBtn')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'flex');
-    
     document.getElementById('newPersonBtn')?.addEventListener('click', () => {
-        let fname = prompt('نام (انگلیسی مثل ALI):');
-        if(!fname) return;
-        let lname = prompt('نام خانوادگی (انگلیسی مثل REZAEI):');
-        if(!lname) return;
-        let gender = confirm('جنسیت؟ OK=مرد (MR) / Cancel=زن (MS)') ? 'MR' : 'MS';
-        let relCode = prompt('کد رابطه (10=دوست، 721=عشق، 369=والدین، 390=رفیق):', '10');
+        let fname = prompt('نام (انگلیسی):'); if(!fname) return;
+        let lname = prompt('نام خانوادگی (انگلیسی):'); if(!lname) return;
+        let gender = confirm('جنسیت: OK=مرد (MR) / Cancel=زن (MS)') ? 'MR' : 'MS';
+        let relCode = prompt('کد رابطه (10=دوست، 721=عشق، 369=والدین):', '10');
         let relText = prompt('توضیح رابطه:', 'دوست');
-        if(fname && lname && relCode) addNewPerson(fname.toUpperCase(), lname.toUpperCase(), gender, relCode, relText);
+        addNewPerson(fname.toUpperCase(), lname.toUpperCase(), gender, relCode, relText);
     });
-    
     document.getElementById('doLoginBtn')?.addEventListener('click', () => {
         let name = document.getElementById('loginName').value.trim();
-        if(!name) { alert('لطفاً اسم خودت رو وارد کن'); return; }
+        if(!name) { alert('لطفاً نام خود را وارد کنید'); return; }
         currentUser = name;
         document.getElementById('userNameDisplay').innerText = currentUser;
         document.getElementById('loginModal').style.display = 'none';
         loadData();
     });
-    
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-        currentUser = null;
-        people = [];
-        selectedPersonId = null;
-        document.getElementById('loginModal').style.display = 'flex';
-    });
-    
+    document.getElementById('logoutBtn')?.addEventListener('click', () => { currentUser = null; people = []; selectedPersonId = null; document.getElementById('loginModal').style.display = 'flex'; });
     window.addEventListener('click', (e) => { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 </script>
 </body>
