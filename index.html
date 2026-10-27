@@ -2,546 +2,315 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>HUMA Clinical | سامانه تخصصی تحلیل الگوی پاسخ رابطه</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>HUMA Clinical | سامانه ارزیابی و پیگیری روابط</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            font-family: 'Inter', 'Vazirmatn', system-ui, -apple-system, sans-serif;
-            background: #edf2ef;
-            color: #1a2e2a;
-            line-height: 1.5;
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+            background: #f3f7f4; color: #1a2e2a; line-height: 1.7;
+            padding-bottom: 80px;
         }
-
-        /* متغیرهای حرفه‌ای */
         :root {
-            --primary: #1e6f3f;
-            --primary-dark: #0e4f2c;
-            --primary-light: #b8dfc8;
-            --primary-bg: #eef7f1;
-            --gray-soft: #f5f7f6;
-            --gray-border: #e2e8e4;
-            --warning: #e6a017;
-            --warning-bg: #fff8e7;
-            --danger: #c73f1e;
-            --danger-bg: #fef3f0;
-            --info: #2c6e6e;
-            --info-bg: #eef7f7;
-            --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 20px 35px -12px rgba(0, 0, 0, 0.12);
-            --radius: 24px;
-            --radius-sm: 16px;
+            --primary: #1e6f3f; --primary-dark: #0e4f2c; --primary-light: #b8dfc8;
+            --primary-bg: #eef7f1; --gray-soft: #f5f7f6; --gray-border: #e2e8e4;
+            --warning: #e6a017; --warning-bg: #fff8e7; --danger: #c73f1e; --danger-bg: #fef3f0;
+            --info: #2c6e6e; --info-bg: #eef7f7; --shadow-sm: 0 2px 6px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.06); --radius: 22px; --radius-sm: 14px;
         }
+        .container { max-width: 850px; margin: 0 auto; padding: 16px; }
 
-        .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 24px 28px;
-        }
+        /* هدر */
+        .header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 8px 0; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-img { height: 50px; width: auto; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08)); }
+        .logo-text h1 { font-size: 1.5rem; font-weight: 800; color: #0e4f2c; letter-spacing: -0.5px; }
+        .logo-text p { font-size: 0.7rem; color: #6f8b7a; }
 
-        /* هدر حرفه‌ای با لوگو */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 32px;
-            padding: 12px 24px;
-            background: white;
-            border-radius: 80px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-border);
+        .header-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        
+        /* بج پروفایل */
+        .user-profile-badge { 
+            display: flex; align-items: center; gap: 8px; cursor: pointer; 
+            padding: 4px 8px 4px 4px; border-radius: 40px; transition: all 0.2s;
         }
+        .user-profile-badge:hover { background: var(--primary-bg); }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; transition: transform 0.2s; }
+        .user-profile-badge:hover .user-avatar { transform: scale(1.05); }
+        .user-name { font-weight: 700; font-size: 0.85rem; color: var(--primary-dark); }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .logo-img {
-            height: 52px;
-            width: auto;
-            border-radius: 14px;
-            object-fit: contain;
-        }
-
-        .logo-text h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #1a5a38, #0e4f2c);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .logo-text p {
-            font-size: 0.7rem;
-            color: #6f8b7a;
-            letter-spacing: 0.2px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1.5px solid var(--primary);
-            color: var(--primary);
-            padding: 8px 22px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .user-badge {
-            background: var(--primary-bg);
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logout-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .logout-icon:hover {
-            opacity: 1;
-        }
+        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 40px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-outline:hover { background: var(--primary); color: white; }
 
         /* کارت‌های آماری */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: var(--radius-sm); padding: 18px 14px; text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--gray-border); transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-number { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 0.7rem; color: #5e6e66; font-weight: 600; }
 
-        .stat-card {
-            background: white;
-            border-radius: var(--radius-sm);
-            padding: 20px 16px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-border);
-            transition: all 0.2s;
-        }
+        .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .card { background: white; border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-md); border: 1px solid var(--gray-border); }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; padding-right: 12px; border-right: 4px solid var(--primary); color: #163a2a; display: flex; align-items: center; gap: 8px; }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-number {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: var(--primary);
-            line-height: 1.2;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #5e6e66;
-            font-weight: 500;
-        }
-
-        /* دکور دو ستونه اصلی */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 28px;
-        }
-
-        @media (max-width: 900px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            .container {
-                padding: 16px;
-            }
-            .header {
-                border-radius: 28px;
-                padding: 12px 20px;
-            }
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-border);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-right: 14px;
-            border-right: 4px solid var(--primary);
-            color: #163a2a;
-        }
+        .icon { width: 18px; height: 18px; fill: currentColor; vertical-align: middle; }
 
         /* لیست افراد */
-        .person-list {
-            max-height: 500px;
-            overflow-y: auto;
+        .person-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; margin-bottom: 10px; background: var(--gray-soft); border-radius: 18px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+        .person-item:hover, .person-item.active { background: var(--primary-bg); border-color: var(--primary-light); transform: translateX(-4px); }
+        .person-code { font-family: monospace; background: white; padding: 4px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; color: var(--primary); border: 1px solid #dcece2; }
+        .eval-mini-btn { background: none; border: 1px solid var(--primary); padding: 4px 14px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; color: var(--primary); cursor: pointer; }
+        .eval-mini-btn:hover:not(:disabled) { background: var(--primary); color: white; }
+        .eval-mini-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #ccc; color: #999; }
+        .closed-badge { background: #e8e8e8; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; color: #555; }
+        
+        /* باکس قفل */
+        .lock-box {
+            background: #fef3e8; border: 1px dashed #e6a017; border-radius: 16px;
+            padding: 14px; margin: 14px 0; text-align: center; font-size: 0.8rem;
+            color: #a36e0e; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .lock-box strong { color: #c73f1e; }
 
-        .person-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-            background: var(--gray-soft);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
+        /* چراغ‌ها */
+        .lights-container { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+        .light-row { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 600; }
+        .light-group { display: flex; gap: 6px; margin-right: auto; }
+        .light { width: 26px; height: 26px; border-radius: 50%; background: #e2ede4; }
+        .light.green { background: #2ecc71; box-shadow: 0 0 8px rgba(46, 204, 113, 0.4); }
+        .light.yellow { background: #f1c40f; box-shadow: 0 0 8px rgba(241, 196, 15, 0.4); }
+        .light.red { background: #e74c3c; box-shadow: 0 0 8px rgba(231, 76, 60, 0.4); }
 
-        .person-item:hover {
-            background: var(--primary-bg);
-            border-color: var(--primary-light);
-            transform: translateX(-4px);
-        }
-
-        .person-code {
-            font-family: 'SF Mono', monospace;
-            background: white;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .insight-badge {
-            background: #fff1df;
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.65rem;
-            color: #b86b0a;
-        }
-
-        .eval-mini-btn {
-            background: none;
-            border: 1px solid var(--primary);
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--primary);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .eval-mini-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .closed-badge {
-            background: #e8e8e8;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            color: #555;
-        }
-
-        /* چراغ‌های پیشرفته */
-        .lights-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 16px 0;
-        }
-
-        .light-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .light-group {
-            display: flex;
-            gap: 8px;
-            margin-left: auto;
-        }
-
-        .light {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #e2ede4;
-            transition: 0.15s;
-        }
-
-        .light.green {
-            background: #2ecc71;
-            box-shadow: 0 0 6px #2ecc71;
-        }
-
-        .light.yellow {
-            background: #f1c40f;
-            box-shadow: 0 0 6px #f1c40f;
-        }
-
-        .light.red {
-            background: #e74c3c;
-            box-shadow: 0 0 6px #e74c3c;
-        }
-
-        /* بینش درمانی */
-        .insight-box {
-            background: var(--info-bg);
-            border-right: 5px solid var(--info);
-            padding: 14px 16px;
-            border-radius: 18px;
-            margin: 16px 0;
-            font-size: 0.85rem;
-        }
-
-        .insight-warning {
-            background: var(--warning-bg);
-            border-right-color: var(--warning);
-        }
-
-        .insight-danger {
-            background: var(--danger-bg);
-            border-right-color: var(--danger);
-        }
-
-        .reminder-box {
-            background: #eef3ea;
-            border-right: 4px solid var(--primary);
-            padding: 12px;
-            border-radius: 16px;
-            margin: 12px 0;
-            font-size: 0.8rem;
-        }
+        /* باکس‌ها */
+        .insight-box { background: var(--info-bg); border-right: 5px solid var(--info); padding: 14px; border-radius: 16px; margin: 14px 0; font-size: 0.8rem; }
+        .insight-warning { background: var(--warning-bg); border-right-color: var(--warning); }
+        .insight-danger { background: var(--danger-bg); border-right-color: var(--danger); }
+        .reminder-box { background: #eef3ea; border-right: 4px solid var(--primary); padding: 12px; border-radius: 14px; margin: 14px 0; font-size: 0.75rem; font-weight: 500; }
+        
+        .chart-container { position: relative; height: 220px; width: 100%; margin: 20px 0; background: #fafcfb; border-radius: 18px; padding: 12px; border: 1px solid var(--gray-border); }
+        .note-box { background: #fff; border: 1px dashed #b8dfc8; border-radius: 14px; padding: 12px; margin-bottom: 10px; font-size: 0.8rem; }
+        .note-date { font-size: 0.65rem; color: #888; margin-bottom: 4px; }
 
         /* مدال‌ها */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(20, 30, 25, 0.6);
-            backdrop-filter: blur(10px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(20,30,25,0.6); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 16px; }
+        .modal-content { background: white; border-radius: 28px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: var(--shadow-lg); }
+        .close-modal { float: left; font-size: 1.5rem; cursor: pointer; color: #888; line-height: 1; }
+        
+        .cat-section { border: 1px solid var(--gray-border); border-radius: 16px; margin-bottom: 16px; overflow: hidden; }
+        .cat-header { padding: 12px 16px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .cat-green .cat-header { background: #e8f5e9; color: #1e6f3f; }
+        .cat-yellow .cat-header { background: #fff8e7; color: #c2810a; }
+        .cat-red .cat-header { background: #feefe9; color: #c73f1e; }
+        
+        .question-item { padding: 12px 16px; border-bottom: 1px solid #eff3ec; font-size: 0.8rem; }
+        .scale-group { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+        .scale-opt { background: #f3f9f1; padding: 6px 16px; border-radius: 30px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: 0.1s; }
+        .scale-opt.selected { background: var(--primary); color: white; transform: scale(1.05); }
+        
+        .btn-primary { background: var(--primary); border: none; padding: 14px 24px; border-radius: 60px; font-weight: 700; color: white; cursor: pointer; width: 100%; font-size: 0.95rem; transition: 0.2s; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); transform: scale(0.99); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+        
+        footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8ba392; padding: 12px; }
 
-        .modal-content {
-            background: white;
-            border-radius: 36px;
-            width: 90%;
-            max-width: 880px;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 28px;
-            box-shadow: var(--shadow-lg);
-        }
+        /* جدول کدگذاری */
+        .code-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.75rem; }
+        .code-table th, .code-table td { padding: 8px 10px; border: 1px solid var(--gray-border); text-align: right; }
+        .code-table th { background: var(--primary-bg); color: var(--primary-dark); font-weight: 700; }
+        .code-table tr:nth-child(even) { background: #fafcfb; }
 
-        .cat-section {
-            border: 1px solid var(--gray-border);
-            border-radius: 20px;
-            margin-bottom: 20px;
-            overflow: hidden;
+        /* بخش پروفایل داخل مدال */
+        .profile-avatar-container { 
+            display: flex; justify-content: center; align-items: center; 
+            margin: 20px 0; min-height: 120px;
         }
-
-        .cat-header {
-            padding: 12px 16px;
-            font-weight: 700;
+        .profile-avatar-large { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            box-shadow: 0 8px 30px rgba(30, 111, 63, 0.15); 
+            transition: transform 0.3s;
         }
-
-        .cat-green .cat-header {
-            background: #e8f5e9;
-            color: #1e6f3f;
+        .profile-avatar-large:hover { transform: scale(1.05) rotate(3deg); }
+        
+        .style-selector { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
+        .style-btn { 
+            background: var(--gray-soft); border: 2px solid transparent; 
+            padding: 8px 16px; border-radius: 30px; cursor: pointer; 
+            font-size: 0.75rem; font-weight: 600; font-family: inherit;
+            transition: all 0.2s; color: #555;
         }
+        .style-btn:hover { background: #e8f0ea; }
+        .style-btn.active { border-color: var(--primary); background: var(--primary-bg); color: var(--primary-dark); font-weight: 700; }
 
-        .cat-yellow .cat-header {
-            background: #fff8e7;
-            color: #c2810a;
+        .input-group { margin: 12px 0; }
+        .input-group label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+        .input-group input { 
+            width: 100%; padding: 12px 16px; border-radius: 40px; 
+            border: 2px solid var(--gray-border); font-family: inherit; 
+            font-size: 0.9rem; transition: border 0.2s;
         }
+        .input-group input:focus { outline: none; border-color: var(--primary); }
 
-        .cat-red .cat-header {
-            background: #feefe9;
-            color: #c73f1e;
-        }
-
-        .question-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid #eff3ec;
-        }
-
-        .scale-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .scale-opt {
-            background: #f3f9f1;
-            padding: 6px 18px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: 0.1s;
-        }
-
-        .scale-opt.selected {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: scale(0.98);
-        }
-
-        .close-modal {
-            float: left;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #888;
-            line-height: 1;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 36px;
-            font-size: 0.7rem;
-            color: #8ba392;
-            border-top: 1px solid #e0ecdf;
-            padding-top: 20px;
-        }
-
-        button {
-            font-family: inherit;
+        @media (min-width: 768px) {
+            .dashboard { grid-template-columns: 1fr 1.2fr; }
+            .header { flex-direction: row; align-items: center; justify-content: space-between; }
+            .header-actions { width: auto; }
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- هدر -->
     <div class="header">
         <div class="logo-area">
-            <img class="logo-img" src="https://uploadkon.ir/uploads/25f211_26photo-2026-06-11-15-51-23.png" alt="HUMA Clinical Logo" onerror="this.style.display='none'">
+            <img class="logo-img" src="https://raw.githubusercontent.com/lesehawio/HUMA/main/photo_2026-06-11_15-51-23.png" alt="HUMA Logo" onerror="this.style.display='none';">
             <div class="logo-text">
-                <h1>HUMA Clinical System</h1>
-                <p>تحلیلگر تخصصی الگوی پاسخ · تشخیص ایده‌آلسازی و انکار آسیب</p>
+                <h1>HUMA Clinical</h1>
+                <p>سامانه ارزیابی و پیگیری روابط بین‌فردی</p>
             </div>
         </div>
         <div class="header-actions">
-            <button id="helpMainBtn" class="btn-outline">📘 راهنمای بالینی</button>
-            <div class="user-badge">
-                👤 <span id="userNameDisplay">کاربر</span>
-<button id="logoutBtn" class="logout-icon" style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
-    <img src="https://uploadkon.ir/uploads/eb4111_26exit.png" 
-         alt="خروج" 
-         style="width: 22px; height: 22px; opacity: 0.7; transition: opacity 0.2s;"
-         onerror="this.style.display='none'; this.parentElement.innerHTML='🚪'; this.parentElement.style.fontSize='1.1rem';">
-</button>            </div>
+            <button id="helpMainBtn" class="btn-outline">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                راهنما
+            </button>
+            
+            <!-- بج پروفایل -->
+            <div class="user-profile-badge" id="profileBadge">
+                <img class="user-avatar" id="userAvatarImg" src="https://api.dicebear.com/10.x/gaze/svg?seed=default" alt="Avatar">
+                <span class="user-name" id="userNameDisplay">کاربر</span>
+            </div>
         </div>
     </div>
 
+    <!-- کارت‌های آماری -->
     <div class="stats-grid">
         <div class="stat-card"><div class="stat-number" id="totalCount">0</div><div class="stat-label">کل پرونده‌ها</div></div>
-        <div class="stat-card"><div class="stat-number" id="activeCount">0</div><div class="stat-label">تحت ارزیابی فعال</div></div>
-        <div class="stat-card"><div class="stat-number" id="closedCount">0</div><div class="stat-label">بایگانی شده</div></div>
-        <div class="stat-card"><div class="stat-number" id="insightCount">0</div><div class="stat-label">الگوی پاسخ ویژه</div></div>
+        <div class="stat-card"><div class="stat-number" id="activeCount">0</div><div class="stat-label">تحت ارزیابی</div></div>
+        <div class="stat-card"><div class="stat-number" id="closedCount">0</div><div class="stat-label">بایگانی</div></div>
+        <div class="stat-card"><div class="stat-number" id="insightCount">0</div><div class="stat-label">الگوی ویژه</div></div>
     </div>
 
+    <!-- داشبورد -->
     <div class="dashboard">
         <div class="card">
-            <div class="card-title">📋 دفترچه روابط درمانی</div>
-            <button id="newPersonBtn" class="btn-primary" style="margin-bottom: 18px;">➕ ثبت فرد جدید</button>
+            <div class="card-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                دفترچه روابط
+            </div>
+            <button id="newPersonBtn" class="btn-primary" style="margin-bottom: 16px;">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                ثبت فرد جدید
+            </button>
             <div class="person-list" id="peopleList"></div>
         </div>
         <div class="card" id="detailPanel">
-            <div class="card-title">🔍 پروفایل تحلیل بالینی</div>
-            <div id="detailContent"><p style="text-align:center; opacity:0.6;">برای مشاهده تحلیل، روی یک پرونده کلیک کنید</p></div>
+            <div class="card-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                پروفایل تحلیل بالینی
+            </div>
+            <div id="detailContent"><p style="text-align:center; opacity:0.6; font-size:0.85rem;">برای مشاهده تحلیل، روی پرونده کلیک کنید</p></div>
         </div>
     </div>
-    <footer>with 💚 - by HUMA</footer>
+    <footer>with HUMA - by HUMA</footer>
 </div>
 
 <!-- مدال ورود -->
 <div class="modal" id="loginModal" style="display:flex">
-    <div class="modal-content" style="max-width: 380px; text-align:center;">
-        <h2 style="color: var(--primary);">HUMA Clinical</h2>
-        <p style="margin: 12px 0;">نام خود را وارد کنید</p>
-        <input type="text" id="loginName" style="width:100%; padding:14px; border-radius:60px; border:2px solid #e2e8e4; margin-bottom:20px;">
+    <div class="modal-content" style="max-width: 340px; text-align:center;">
+        <h2 style="color: var(--primary); font-size:1.3rem;">HUMA Clinical</h2>
+        <p style="margin: 10px 0; font-size:0.85rem;">نام خود را وارد کنید</p>
+        <input type="text" id="loginName" style="width:100%; padding:12px; border-radius:40px; border:2px solid #e2e8e4; margin-bottom:14px; font-family:inherit;">
         <button id="doLoginBtn" class="btn-primary">ورود به سامانه</button>
+    </div>
+</div>
+
+<!-- مدال پروفایل -->
+<div class="modal" id="profileModal">
+    <div class="modal-content" style="max-width: 420px;">
+        <span class="close-modal" id="closeProfileModal">&times;</span>
+        <h3 style="color:var(--primary); font-size:1.15rem; display:flex; align-items:center; gap:6px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            مدیریت پروفایل
+        </h3>
+        <div class="profile-avatar-container">
+            <img class="profile-avatar-large" id="profileAvatarPreview" src="https://api.dicebear.com/10.x/gaze/svg?seed=user" alt="Avatar Preview">
+        </div>
+        <div class="style-selector" id="styleSelector">
+            <button class="style-btn active" data-style="gaze">Gaze</button>
+            <button class="style-btn" data-style="bottts">Bottts</button>
+            <button class="style-btn" data-style="avataaars">Avataaars</button>
+            <button class="style-btn" data-style="notionists">Notionists</button>
+        </div>
+        <div class="input-group">
+            <label>نام نمایشی شما</label>
+            <input type="text" id="profileNameInput" placeholder="نام خود را وارد کنید">
+        </div>
+        <button id="saveProfileBtn" class="btn-primary" style="margin-top:16px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            ذخیره تغییرات
+        </button>
     </div>
 </div>
 
 <!-- مدال راهنما -->
 <div class="modal" id="helpModal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 700px;">
         <span class="close-modal" id="closeHelpModal">&times;</span>
-        <h2 style="color:var(--primary);">📘 راهنمای تخصصی HUMA</h2>
-        <div style="margin:16px 0; background:#f4faf5; padding:14px; border-radius:20px;"><strong>📍 کدگذاری استاندارد:</strong> جنسیت (MR/MS) + کد رابطه + حروف اول نام و نام خانوادگی</div>
-        <div style="margin:12px 0;"><strong>⚙️ تحلیل الگوهای پاسخ (دروغ‌سنج بالینی):</strong><br>
-        • <strong>ایده‌آلسازی</strong> — میانگین سبز بالا، قرمز و زرد پایین (فاز هانی‌مون)<br>
-        • <strong>انکار آسیب</strong> — سبز و قرمز هر دو پایین<br>
-        • <strong>تناقض درون‌دسته‌ای</strong> — انحراف معیار بالا در یک دسته<br>
-        • <strong>الگوی افراطی</strong> — فقط ۱ یا ۵ استفاده شده<br>
-        • <strong>تغییر ناگهانی</strong> — اختلاف بیش از ۲ نمره نسبت به ارزیابی قبل
+        <h2 style="color:var(--primary); font-size:1.2rem; display:flex; align-items:center; gap:8px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+            راهنمای تخصصی HUMA
+        </h2>
+        
+        <div style="margin:16px 0; background:#f4faf5; padding:12px; border-radius:14px; font-size:0.8rem;">
+            <strong style="display:flex; align-items:center; gap:4px;">کدگذاری استاندارد:</strong> جنسیت (MR/MS) + کد رابطه + حروف اول نام و نام خانوادگی
         </div>
-        <div><strong>🟢🟡🔴 قانون چراغ‌ها:</strong> ۵ چراغ سبز، قرمز یا زرد → بسته شدن خودکار پرونده و توصیه قطعی درمانی.</div>
-        <button id="closeHelpBtn" class="btn-primary" style="margin-top:20px;">متوجه شدم</button>
+        
+        <div style="margin:12px 0;">
+            <strong style="font-size:0.85rem; display:block; margin-bottom:8px;">جدول کدهای رابطه:</strong>
+            <table class="code-table">
+                <thead><tr><th>کد</th><th>نام</th></tr></thead>
+                <tbody>
+                    <tr><td>721</td><td>یار</td></tr>
+                    <tr><td>369</td><td>والدین</td></tr>
+                    <tr><td>۰۵۰</td><td>برادر/ خواهر</td></tr>
+                    <tr><td>۱۱۲۲</td><td>پدر بزرگ ها و مادر بزرگ ها</td></tr>
+                    <tr><td>۲۵</td><td>عمو/دایی/خاله/عمه</td></tr>
+                    <tr><td>۰۲۵</td><td>پسر عمو/پسر خاله/پسر دایی/دختر خاله /دختر دایی/دختر عمو/دختر عمه</td></tr>
+                    <tr><td>۱۰</td><td>دوست</td></tr>
+                    <tr><td>۳۹۰</td><td>رفیق</td></tr>
+                    <tr><td>۱۴۰۱/۱۴۰۲/۱۴۰۳</td><td>همکلاسی</td></tr>
+                    <tr><td>۲۶۶</td><td>همکار</td></tr>
+                    <tr><td>۶۲۵</td><td>فامیل درجه۴</td></tr>
+                    <tr><td>۱۲۵</td><td>فامیل درجه 3</td></tr>
+                    <tr><td>۳۵۲</td><td>آشنا</td></tr>
+                    <tr><td>0625</td><td>زن عمو/زن دایی/ شوهر خاله/شوهر عمه</td></tr>
+                    <tr><td>466</td><td>استاد /معلم</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin:12px 0; font-size:0.8rem;">
+            <strong style="display:flex; align-items:center; gap:4px;">تحلیل الگوهای پاسخ:</strong><br>
+            • <strong>ایده‌آل‌سازی</strong> — میانگین سبز بالا، قرمز و زرد پایین (فاز هانی‌مون)<br>
+            • <strong>انکار آسیب</strong> — سبز و قرمز هر دو پایین<br>
+            • <strong>تناقض درون‌دسته‌ای</strong> — انحراف معیار بالا در یک دسته<br>
+            • <strong>الگوی افراطی</strong> — فقط ۱ یا ۵ استفاده شده<br>
+            • <strong>تغییر ناگهانی</strong> — اختلاف بیش از ۲ نمره نسبت به ارزیابی قبل
+        </div>
+        
+        <div style="font-size:0.8rem; display:flex; align-items:center; gap:4px;">
+            <strong>قانون چراغ‌ها:</strong> ۵ چراغ سبز، قرمز یا زرد → بسته شدن خودکار پرونده و توصیه قطعی درمانی.
+        </div>
+        
+        <div style="font-size:0.8rem; display:flex; align-items:center; gap:4px; margin-top:8px;">
+            <strong>قانون ۳۰ روزه:</strong> بعد از هر ارزیابی، پرونده به مدت ۳۰ روز قفل می‌شود و اجازه ارزیابی مجدد را نمی‌دهد.
+        </div>
+        
+        <button id="closeHelpBtn" class="btn-primary" style="margin-top:16px;">متوجه شدم</button>
     </div>
 </div>
 
@@ -549,20 +318,43 @@
 <div class="modal" id="evalModal">
     <div class="modal-content">
         <span class="close-modal" id="closeEvalModal">&times;</span>
-        <h3 id="modalTitle" style="color:var(--primary);">ارزیابی بالینی رابطه</h3>
-        <div id="modalCodeDisplay" style="background:#f0f8ed; padding:10px; border-radius:40px; text-align:center; margin:12px 0;"></div>
+        <h3 id="modalTitle" style="color:var(--primary); font-size:1.1rem; display:flex; align-items:center; gap:6px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            ارزیابی بالینی
+        </h3>
+        <div id="modalCodeDisplay" style="background:#f0f8ed; padding:8px; border-radius:30px; text-align:center; margin:10px 0; font-size:0.8rem;"></div>
 
-        <div class="cat-section cat-green"><div class="cat-header">🟢 دسته سبز · نشانه‌های امنیت و سلامت</div><div id="greenModalQs"></div></div>
-        <div class="cat-section cat-yellow"><div class="cat-header">🟡 دسته زرد · رفتارهای مبهم و بی‌ثبات</div><div id="yellowModalQs"></div></div>
-        <div class="cat-section cat-red"><div class="cat-header">🔴 دسته قرمز · هشدارهای سمی و خطرناک</div><div id="redModalQs"></div></div>
+        <div class="cat-section cat-green"><div class="cat-header"><span style="width:10px;height:10px;background:#2ecc71;border-radius:50%;display:inline-block;"></span> دسته سبز · امنیت</div><div id="greenModalQs"></div></div>
+        <div class="cat-section cat-yellow"><div class="cat-header"><span style="width:10px;height:10px;background:#f1c40f;border-radius:50%;display:inline-block;"></span> دسته زرد · ابهام</div><div id="yellowModalQs"></div></div>
+        <div class="cat-section cat-red"><div class="cat-header"><span style="width:10px;height:10px;background:#e74c3c;border-radius:50%;display:inline-block;"></span> دسته قرمز · سمیت</div><div id="redModalQs"></div></div>
 
-        <button id="saveEvalBtn" class="btn-primary">💾 ذخیره و تحلیل الگو</button>
-        <div id="modalResult" style="margin-top:18px; display:none;"></div>
+        <button id="saveEvalBtn" class="btn-primary">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            ذخیره و تحلیل
+        </button>
+        <div id="modalResult" style="margin-top:14px; display:none; font-size:0.85rem;"></div>
+    </div>
+</div>
+
+<!-- مدال یادداشت -->
+<div class="modal" id="noteModal">
+    <div class="modal-content" style="max-width: 400px;">
+        <span class="close-modal" id="closeNoteModal">&times;</span>
+        <h3 style="color:var(--primary); font-size:1.1rem; display:flex; align-items:center; gap:6px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            ثبت یادداشت بالینی
+        </h3>
+        <p style="font-size:0.8rem; margin:8px 0; color:#555;">اتفاقی که این ماه افتاد را بنویسید:</p>
+        <textarea id="noteText" rows="4" style="width:100%; padding:10px; border-radius:12px; border:1px solid #ddd; font-family:inherit; font-size:0.85rem; resize:vertical;"></textarea>
+        <button id="saveNoteBtn" class="btn-primary" style="margin-top:10px;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            ذخیره یادداشت
+        </button>
     </div>
 </div>
 
 <script>
-    // ==================== سوالات بالینی ====================
+    // ==================== سوالات ====================
     const GREEN_QS = [
         "در ماه گذشته، چند بار این فرد در مواقع بحرانی در کنارت بود؟",
         "چند بار توانستی احساسات واقعی‌ات را بدون ترس از قضاوت با او در میان بگذاری؟",
@@ -590,59 +382,126 @@
     let currentUser = null;
     let people = [];
     let selectedPersonId = null;
+    let chartInstance = null;
 
-    // ابزار کمکی
+    let currentAvatarStyle = 'gaze';
+    let currentAvatarSeed = 'default';
+
+    // ==================== آواتار ====================
+    function updateAvatarDisplay(style, seed) {
+        const avatarUrl = `https://api.dicebear.com/10.x/${style}/svg?seed=${encodeURIComponent(seed)}`;
+        const headerAvatar = document.getElementById('userAvatarImg');
+        const profilePreview = document.getElementById('profileAvatarPreview');
+        
+        if(headerAvatar) headerAvatar.src = avatarUrl;
+        if(profilePreview) profilePreview.src = avatarUrl;
+    }
+
+    function openProfileModal() {
+        document.getElementById('profileNameInput').value = currentUser || 'کاربر';
+        currentAvatarSeed = currentUser || 'user';
+        
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.style === currentAvatarStyle);
+        });
+        
+        updateAvatarDisplay(currentAvatarStyle, currentAvatarSeed);
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    document.getElementById('saveProfileBtn')?.addEventListener('click', () => {
+        let newName = document.getElementById('profileNameInput').value.trim();
+        if(!newName) { alert('نام نمی‌تواند خالی باشد'); return; }
+        
+        currentUser = newName;
+        currentAvatarSeed = newName;
+        document.getElementById('userNameDisplay').innerText = currentUser;
+        updateAvatarDisplay(currentAvatarStyle, currentAvatarSeed);
+        
+        localStorage.setItem('HUMA_profile_' + currentUser, JSON.stringify({
+            name: currentUser,
+            style: currentAvatarStyle,
+            seed: currentAvatarSeed
+        }));
+        
+        document.getElementById('profileModal').style.display = 'none';
+        loadData();
+    });
+
+    document.querySelectorAll('.style-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAvatarStyle = btn.dataset.style;
+            updateAvatarDisplay(currentAvatarStyle, currentAvatarSeed);
+        });
+    });
+
+    document.getElementById('profileBadge')?.addEventListener('click', openProfileModal);
+    document.getElementById('closeProfileModal')?.addEventListener('click', () => document.getElementById('profileModal').style.display = 'none');
+
+    // ==================== قانون ۳۰ روزه ====================
+    // محاسبه روزهای باقی‌مانده تا باز شدن قفل
+    function getDaysUntilNextEval(person) {
+        if(!person.evaluations || person.evaluations.length === 0) return 0;
+        let lastEvalDate = new Date(person.evaluations[person.evaluations.length-1].date);
+        let nextEvalDate = new Date(lastEvalDate.getTime() + (30 * 24 * 60 * 60 * 1000)); // ۳۰ روز
+        let now = new Date();
+        let diff = nextEvalDate - now;
+        if(diff <= 0) return 0;
+        return Math.ceil(diff / (24 * 60 * 60 * 1000));
+    }
+
+    // تاریخ باز شدن قفل
+    function getNextEvalDate(person) {
+        if(!person.evaluations || person.evaluations.length === 0) return null;
+        let lastEvalDate = new Date(person.evaluations[person.evaluations.length-1].date);
+        return new Date(lastEvalDate.getTime() + (30 * 24 * 60 * 60 * 1000));
+    }
+
+    // ==================== بقیه توابع ====================
     function calculateStdDev(arr) {
         let mean = arr.reduce((a,b)=>a+b,0)/arr.length;
         let variance = arr.reduce((a,b)=>a + Math.pow(b-mean,2),0)/arr.length;
         return Math.sqrt(variance);
     }
 
-    // تحلیل الگوی پاسخ (نسخه حرفه‌ای)
     function analyzeResponsePattern(greenArr, yellowArr, redArr, previousEvaluation = null) {
-        let insights = [];
-        let patternType = null;
-        let severity = 'info';
+        let insights = [], patternType = null, severity = 'info';
         let avgG = greenArr.reduce((a,b)=>a+b,0)/greenArr.length;
         let avgY = yellowArr.reduce((a,b)=>a+b,0)/yellowArr.length;
         let avgR = redArr.reduce((a,b)=>a+b,0)/redArr.length;
         let allScores = [...greenArr, ...yellowArr, ...redArr];
 
         if(avgG >= 4.5 && avgR <= 1.5 && avgY <= 1.5) {
-            insights.push("🧠 **تشخیص ایده‌آلسازی (مرحله هانی‌مون)**: مغز تحت تأثیر دوپامین و اکسی‌توسین است. توصیه بالینی: ۱۴ روز دیگر مجدد ارزیابی کنید.");
-            patternType = "ایده‌آلسازی";
-            severity = "warning";
+            insights.push("تشخیص ایده‌آل‌سازی (مرحله هانی‌مون): مغز تحت تأثیر دوپامین است. ۱۴ روز دیگر مجدد ارزیابی کنید.");
+            patternType = "ایده‌آل‌سازی"; severity = "warning";
+        } else if(avgR <= 1.2 && avgG <= 2.5) {
+            insights.push("انکار آسیب یا بی‌حسی عاطفی: هم نشانه‌های مثبت و هم منفی کمتر از حد نرمال است. با مشاور صحبت کنید.");
+            patternType = "انکار آسیب"; severity = "warning";
         }
-        else if(avgR <= 1.2 && avgG <= 2.5) {
-            insights.push("⚠️ **انکار آسیب یا بی‌حسی عاطفی**: هم نشانه‌های مثبت و هم منفی کمتر از حد نرمال گزارش شده است. گفتگو با مشاور توصیه می‌شود.");
-            patternType = "انکار آسیب";
-            severity = "warning";
-        }
-        if(calculateStdDev(greenArr) > 1.5) insights.push("🔄 تناقض در دسته سبز: ثبات رابطه پایین است.");
-        if(calculateStdDev(redArr) > 1.5) insights.push("🔄 تناقض در دسته قرمز: ابهام در ارزیابی رفتارهای سمی.");
+        if(calculateStdDev(greenArr) > 1.5) insights.push("تناقض در دسته سبز: ثبات رابطه پایین است.");
+        if(calculateStdDev(redArr) > 1.5) insights.push("تناقض در دسته قرمز: ابهام در ارزیابی رفتارهای سمی.");
         if(allScores.every(s => s === 1 || s === 5) && allScores.includes(1) && allScores.includes(5)) {
-            insights.push("⚡ الگوی پاسخ افراطی (قطبیشده). واقعیت در طیف خاکستری است.");
+            insights.push("الگوی پاسخ افراطی (قطبی‌شده). واقعیت در طیف خاکستری است.");
             patternType = "الگوی افراطی";
         }
         if(previousEvaluation) {
             let changeG = Math.abs(avgG - previousEvaluation.avgG);
             let changeR = Math.abs(avgR - previousEvaluation.avgR);
-            if(changeG > 2 || changeR > 2) insights.push(`📉 تغییر ناگهانی در ارزیابی (سبز:${changeG.toFixed(1)} / قرمز:${changeR.toFixed(1)}). روابط پایدار تغییرات ناگهانی ندارند.`);
+            if(changeG > 2 || changeR > 2) insights.push(`تغییر ناگهانی در ارزیابی (سبز:${changeG.toFixed(1)} / قرمز:${changeR.toFixed(1)}). روابط پایدار تغییرات ناگهانی ندارند.`);
         }
         if(avgR >= 3.5 && avgG >= 3.5) {
-            insights.push("🔴 **هشدار قرمز بحرانی: الگوی تناقض سمی** – احتمال چرخه خشونت و توجیه رفتار. توصیه فوری به مشاوره تخصصی.");
-            patternType = "تناقض سمی";
-            severity = "danger";
+            insights.push("هشدار بحرانی: تناقض سمی – احتمال چرخه خشونت و توجیه رفتار. مشاوره فوری.");
+            patternType = "تناقض سمی"; severity = "danger";
         }
-        if(insights.length === 0) insights.push("✅ الگوی پاسخ متعادل. ارزیابی نسبتاً واقعی به نظر می‌رسد.");
+        if(insights.length === 0) insights.push("الگوی پاسخ متعادل. ارزیابی نسبتاً واقعی به نظر می‌رسد.");
         return { insights, patternType, severity };
     }
 
-    // ذخیره و بارگذاری
     function saveData() {
         if(currentUser) localStorage.setItem(`HUMA_Clinical_${currentUser}`, JSON.stringify(people));
-        renderPeopleList();
-        updateStats();
+        renderPeopleList(); updateStats();
         if(selectedPersonId) renderDetail(selectedPersonId);
     }
 
@@ -650,8 +509,7 @@
         if(currentUser) {
             let stored = localStorage.getItem(`HUMA_Clinical_${currentUser}`);
             people = stored ? JSON.parse(stored) : [];
-            renderPeopleList();
-            updateStats();
+            renderPeopleList(); updateStats();
             if(people.length > 0 && !selectedPersonId) renderDetail(people[0].id);
         }
     }
@@ -668,14 +526,8 @@
     function addNewPerson(fname, lname, gender, relCode, relText) {
         let code = generateCode(fname, lname, gender, relCode);
         people.push({
-            id: Date.now(),
-            name: `${fname} ${lname}`,
-            fullCode: code,
-            relationType: relText,
-            evaluations: [],
-            lights: { green: 0, yellow: 0, red: 0 },
-            isClosed: false,
-            closedReason: null
+            id: Date.now(), name: `${fname} ${lname}`, fullCode: code, relationType: relText,
+            evaluations: [], lights: { green: 0, yellow: 0, red: 0 }, isClosed: false, closedReason: null, notes: []
         });
         saveData();
     }
@@ -686,58 +538,59 @@
     }
 
     function getVibe(avgG, avgY, avgR) {
-        if(avgR > avgG) return { vibe:'🔴', label:'هشدار سمی · خطر آسیب' };
-        if(avgY > avgG) return { vibe:'🟡', label:'مبهم · نیاز به بررسی عمیق‌تر' };
-        return { vibe:'🟢', label:'الگوی امن · رابطه قابل اعتماد' };
+        if(avgR > avgG) return { vibe:'قرمز', label:'هشدار سمی · خطر آسیب' };
+        if(avgY > avgG) return { vibe:'زرد', label:'مبهم · نیاز به بررسی عمیق‌تر' };
+        return { vibe:'سبز', label:'الگوی امن · رابطه قابل اعتماد' };
     }
 
     function addEvaluation(personId, gArr, yArr, rArr) {
         let p = people.find(p => p.id === personId);
         if(!p || p.isClosed) return false;
+        
+        // چک کردن قفل ۳۰ روزه
+        let daysLeft = getDaysUntilNextEval(p);
+        if(daysLeft > 0) {
+            alert(`این پرونده تا ${daysLeft} روز دیگر قفل است.`);
+            return false;
+        }
+        
         let avgs = computeAverages(gArr, yArr, rArr);
         if(!avgs) return false;
         let previousEval = p.evaluations.length ? p.evaluations[p.evaluations.length-1] : null;
         let analysis = analyzeResponsePattern(gArr, yArr, rArr, previousEval);
         let vibeRes = getVibe(avgs.avgG, avgs.avgY, avgs.avgR);
-        if(vibeRes.vibe === '🟢') p.lights.green++;
-        else if(vibeRes.vibe === '🟡') p.lights.yellow++;
+        
+        if(vibeRes.vibe === 'سبز') p.lights.green++;
+        else if(vibeRes.vibe === 'زرد') p.lights.yellow++;
         else p.lights.red++;
 
         p.evaluations.push({
-            date: new Date().toISOString(),
-            avgG: avgs.avgG,
-            avgY: avgs.avgY,
-            avgR: avgs.avgR,
-            vibe: vibeRes.vibe,
-            label: vibeRes.label,
-            insights: analysis.insights,
-            patternType: analysis.patternType,
-            severity: analysis.severity
+            date: new Date().toISOString(), avgG: avgs.avgG, avgY: avgs.avgY, avgR: avgs.avgR,
+            vibe: vibeRes.vibe, label: vibeRes.label, insights: analysis.insights, patternType: analysis.patternType, severity: analysis.severity
         });
 
-        if(p.lights.green >= 5) { p.isClosed = true; p.closedReason = '✅ ۵ چراغ سبز · رابطه کاملاً امن تشخیص داده شد. پرونده بسته شد.'; }
-        else if(p.lights.red >= 5) { p.isClosed = true; p.closedReason = '🔴 ۵ چراغ قرمز · رابطه به شدت سمی است. قطع ارتباط توصیه می‌شود. پرونده بسته شد.'; }
-        else if(p.lights.yellow >= 5) { p.isClosed = true; p.closedReason = '🟡 ۵ چراغ زرد · تأثیر خنثی. بایگانی شد.'; }
+        if(p.lights.green >= 5) { p.isClosed = true; p.closedReason = '۵ چراغ سبز · رابطه کاملاً امن.'; }
+        else if(p.lights.red >= 5) { p.isClosed = true; p.closedReason = '۵ چراغ قرمز · رابطه سمی. قطع ارتباط.'; }
+        else if(p.lights.yellow >= 5) { p.isClosed = true; p.closedReason = '۵ چراغ زرد · تأثیر خنثی. بایگانی.'; }
         saveData();
         return { success: true, insights: analysis.insights };
     }
 
-    function getDaysSinceLastEval(person) {
-        if(!person.evaluations.length) return null;
-        let last = new Date(person.evaluations[person.evaluations.length-1].date);
-        return Math.floor((new Date() - last) / (86400000));
-    }
-
     function renderPeopleList() {
         let container = document.getElementById('peopleList');
-        if(!people.length) { container.innerHTML = '<div style="padding:20px; text-align:center;">هیچ پرونده‌ای ثبت نشده</div>'; return; }
+        if(!people.length) { container.innerHTML = '<div style="padding:16px; text-align:center; font-size:0.8rem; color:#888;">هیچ پرونده‌ای ثبت نشده. روی «ثبت فرد جدید» بزن.</div>'; return; }
         container.innerHTML = people.map(p => {
-            let lastVibe = p.evaluations.length ? p.evaluations[p.evaluations.length-1].vibe : '❓';
+            let lastVibe = p.evaluations.length ? p.evaluations[p.evaluations.length-1].vibe : '?';
             let hasInsight = p.evaluations.some(e => e.insights?.length > 0);
-            return `<div class="person-item" data-id="${p.id}">
-                        <div><span class="person-code">${p.fullCode}</span> <strong>${p.name}</strong> ${hasInsight ? '<span class="insight-badge">🔍</span>' : ''}</div>
-                        <div>${lastVibe}</div>
-                        ${p.isClosed ? '<span class="closed-badge">🔒 بایگانی</span>' : `<button class="eval-mini-btn" data-id="${p.id}">ارزیابی</button>`}
+            let daysLeft = getDaysUntilNextEval(p);
+            let isLocked = daysLeft > 0;
+            
+            return `<div class="person-item ${p.id === selectedPersonId ? 'active' : ''}" data-id="${p.id}">
+                        <div><span class="person-code">${p.fullCode}</span> <strong style="font-size:0.85rem;">${p.name}</strong> ${hasInsight ? '<span class="insight-badge" style="font-size:0.6rem; background:#fff1df; padding:2px 6px; border-radius:10px; color:#b86b0a;">ویژه</span>' : ''}</div>
+                        <div style="font-size:0.8rem; font-weight:600; color:${lastVibe==='سبز'?'#2ecc71':lastVibe==='زرد'?'#f1c40f':lastVibe==='قرمز'?'#e74c3c':'#888'};">${lastVibe}</div>
+                        ${p.isClosed ? '<span class="closed-badge">بایگانی</span>' : 
+                          isLocked ? `<span class="closed-badge" style="background:#fff8e7; color:#a36e0e;">قفل (${daysLeft} روز)</span>` : 
+                          `<button class="eval-mini-btn" data-id="${p.id}">ارزیابی</button>`}
                     </div>`;
         }).join('');
         document.querySelectorAll('.person-item').forEach(el => {
@@ -752,13 +605,27 @@
         let p = people.find(p => p.id === personId);
         if(!p) return;
         selectedPersonId = personId;
-        let days = getDaysSinceLastEval(p);
-        let reminder = (!p.isClosed && days !== null && days >= 30) ? `<div class="reminder-box">⚠️ بیش از ۳۰ روز از آخرین ارزیابی گذشته. لطفاً مجدد ارزیابی کنید.</div>` : (days !== null ? `<div class="reminder-box">📅 آخرین ارزیابی: ${days} روز پیش (هر ۳۰ روز یکبار)</div>` : '');
+        
+        let daysLeft = getDaysUntilNextEval(p);
+        let nextDate = getNextEvalDate(p);
+        let isLocked = daysLeft > 0;
+        
+        // باکس قفل
+        let lockHtml = '';
+        if(isLocked) {
+            let nextDateStr = nextDate ? nextDate.toLocaleDateString('fa-IR') : 'نامشخص';
+            lockHtml = `<div class="lock-box">
+                <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                ارزیابی بعدی: <strong>${daysLeft} روز دیگر</strong> (${nextDateStr})
+            </div>`;
+        }
+        
+        let reminder = (!p.isClosed && !isLocked && p.evaluations.length > 0) ? `<div class="reminder-box">آماده ارزیابی مجدد. لطفاً دکمه ارزیابی را بزنید.</div>` : '';
 
         let lightsHtml = `<div class="lights-container">
-            <div class="light-row"><span>🟢 سلامت:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.green ? 'green' : ''}"></div>`).join('')}</div><span>${p.lights.green}/5</span></div>
-            <div class="light-row"><span>🟡 ابهام:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.yellow ? 'yellow' : ''}"></div>`).join('')}</div><span>${p.lights.yellow}/5</span></div>
-            <div class="light-row"><span>🔴 هشدار:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.red ? 'red' : ''}"></div>`).join('')}</div><span>${p.lights.red}/5</span></div>
+            <div class="light-row"><span>سلامت:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.green ? 'green' : ''}"></div>`).join('')}</div><span>${p.lights.green}/5</span></div>
+            <div class="light-row"><span>ابهام:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.yellow ? 'yellow' : ''}"></div>`).join('')}</div><span>${p.lights.yellow}/5</span></div>
+            <div class="light-row"><span>هشدار:</span><div class="light-group">${[...Array(5)].map((_,i)=>`<div class="light ${i < p.lights.red ? 'red' : ''}"></div>`).join('')}</div><span>${p.lights.red}/5</span></div>
         </div>`;
 
         let lastEval = p.evaluations[p.evaluations.length-1];
@@ -767,29 +634,87 @@
             let cls = 'insight-box';
             if(lastEval.severity === 'warning') cls += ' insight-warning';
             if(lastEval.severity === 'danger') cls += ' insight-danger';
-            insightsHtml = `<div class="${cls}"><strong>🧠 تحلیل الگوی پاسخ شما:</strong><br>${lastEval.insights.join('<br>')}</div>`;
+            insightsHtml = `<div class="${cls}"><strong>تحلیل الگوی پاسخ:</strong><br>${lastEval.insights.join('<br>')}</div>`;
         }
-        let history = `<div style="margin-top:14px;"><strong>تاریخچه ارزیابی‌ها:</strong> ${p.evaluations.slice(-4).map(e=>`${e.vibe} ${new Date(e.date).toLocaleDateString('fa-IR')}`).join(' · ')}</div>`;
-        let closedBox = p.isClosed ? `<div style="background:#f2eae8; border-radius:16px; padding:12px; margin-top:12px;">🔒 پرونده بسته شده: ${p.closedReason}</div>` : '';
-        document.getElementById('detailContent').innerHTML = `<div><strong>${p.name}</strong> <span class="person-code">${p.fullCode}</span> · ${p.relationType}</div>${lightsHtml}${reminder}${insightsHtml}${history}${closedBox}${!p.isClosed ? '<button id="quickEvalBtn" class="btn-primary" style="margin-top:16px;">📝 ارزیابی جدید</button>' : ''}`;
-        if(!p.isClosed) document.getElementById('quickEvalBtn')?.addEventListener('click', () => openEvalModal(personId));
+        
+        let chartHtml = `<div class="chart-container"><canvas id="trendChart"></canvas></div>`;
+        
+        let notesHtml = `<div style="margin-top:14px;"><div style="display:flex; justify-content:space-between; align-items:center;"><strong style="font-size:0.85rem;">یادداشت‌های بالینی:</strong><button class="btn-outline" id="addNoteBtn" style="padding:4px 10px; font-size:0.65rem;">+ ثبت یادداشت</button></div>
+            ${p.notes && p.notes.length ? p.notes.slice(-3).reverse().map(n => `<div class="note-box"><div class="note-date">${new Date(n.date).toLocaleDateString('fa-IR')}</div>${n.text}</div>`).join('') : '<p style="font-size:0.75rem; color:#888; margin-top:6px;">هنوز یادداشتی ثبت نشده.</p>'}
+        </div>`;
+
+        // دکمه ارزیابی: اگه قفل باشه، غیرفعال
+        let evalBtnHtml = '';
+        if(p.isClosed) {
+            evalBtnHtml = `<div style="background:#f2eae8; border-radius:12px; padding:10px; margin-top:10px; font-size:0.8rem;">پرونده بسته شده: ${p.closedReason}</div>`;
+        } else if(isLocked) {
+            evalBtnHtml = `<button class="btn-primary" disabled style="margin-top:14px; opacity:0.5; cursor:not-allowed;">ارزیابی قفل است</button>`;
+        } else {
+            evalBtnHtml = `<button id="quickEvalBtn" class="btn-primary" style="margin-top:14px;"><svg class="icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> ارزیابی جدید</button>`;
+        }
+
+        document.getElementById('detailContent').innerHTML = `<div><strong style="font-size:1rem;">${p.name}</strong> <span class="person-code">${p.fullCode}</span><br><span style="font-size:0.75rem; color:#666;">${p.relationType}</span></div>${lightsHtml}${lockHtml}${reminder}${insightsHtml}${chartHtml}${notesHtml}${evalBtnHtml}`;
+        
+        if(!p.isClosed && !isLocked) {
+            document.getElementById('quickEvalBtn')?.addEventListener('click', () => openEvalModal(personId));
+        }
+        document.getElementById('addNoteBtn')?.addEventListener('click', () => openNoteModal(personId));
+        
+        setTimeout(() => drawChart(p), 100);
+    }
+
+    function drawChart(person) {
+        const ctx = document.getElementById('trendChart');
+        if(!ctx) return;
+        if(chartInstance) chartInstance.destroy();
+        
+        let labels = person.evaluations.map((e, i) => `ماه ${i+1}`);
+        let dataG = person.evaluations.map(e => e.avgG);
+        let dataY = person.evaluations.map(e => e.avgY);
+        let dataR = person.evaluations.map(e => e.avgR);
+        
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.length ? labels : ['بدون داده'],
+                datasets: [
+                    { label: 'سبز', data: dataG, borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', tension: 0.3, fill: true },
+                    { label: 'زرد', data: dataY, borderColor: '#f1c40f', backgroundColor: 'rgba(241, 196, 15, 0.1)', tension: 0.3, fill: true },
+                    { label: 'قرمز', data: dataR, borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', tension: 0.3, fill: true }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { labels: { font: { family: 'Vazirmatn', size: 10 } } } },
+                scales: {
+                    y: { beginAtZero: true, max: 5, ticks: { stepSize: 1, font: { family: 'Vazirmatn', size: 9 } } },
+                    x: { ticks: { font: { family: 'Vazirmatn', size: 9 } } }
+                }
+            }
+        });
     }
 
     let currentEvalId = null, tempG = [], tempY = [], tempR = [];
     function openEvalModal(id) {
         let p = people.find(p => p.id === id);
         if(!p || p.isClosed) { alert('پرونده بسته شده'); return; }
+        
+        // چک قفل ۳۰ روزه
+        let daysLeft = getDaysUntilNextEval(p);
+        if(daysLeft > 0) { alert(`این پرونده تا ${daysLeft} روز دیگر قفل است.`); return; }
+        
         currentEvalId = id;
         tempG = Array(GREEN_QS.length).fill(null);
         tempY = Array(YELLOW_QS.length).fill(null);
         tempR = Array(RED_QS.length).fill(null);
         document.getElementById('modalTitle').innerHTML = `ارزیابی: ${p.name}`;
         document.getElementById('modalCodeDisplay').innerHTML = `${p.fullCode} · ${p.relationType}`;
+        
         function renderCat(containerId, questions, arr) {
             let cont = document.getElementById(containerId); cont.innerHTML = '';
             questions.forEach((q, idx) => {
                 let div = document.createElement('div'); div.className = 'question-item';
-                div.innerHTML = `<div style="font-size:0.85rem;">${idx+1}. ${q}</div><div class="scale-group" data-idx="${idx}">${[1,2,3,4,5].map(s => `<span class="scale-opt" data-score="${s}">${s}</span>`).join('')}</div>`;
+                div.innerHTML = `<div>${idx+1}. ${q}</div><div class="scale-group" data-idx="${idx}">${[1,2,3,4,5].map(s => `<span class="scale-opt" data-score="${s}">${s}</span>`).join('')}</div>`;
                 cont.appendChild(div);
             });
             cont.querySelectorAll('.scale-group').forEach(group => {
@@ -801,7 +726,6 @@
                     btns.forEach(b => b.classList.remove('selected'));
                     btn.classList.add('selected');
                 }));
-                if(arr[idx]) { let target = Array.from(btns).find(b => parseInt(b.dataset.score) === arr[idx]); if(target) target.classList.add('selected'); }
             });
         }
         renderCat('greenModalQs', GREEN_QS, tempG);
@@ -819,32 +743,65 @@
             let last = p.evaluations[p.evaluations.length-1];
             let msgDiv = document.getElementById('modalResult');
             msgDiv.style.display = 'block';
-            msgDiv.innerHTML = `<div style="background:#eaf7ec; border-radius:20px; padding:14px; text-align:center;"><div style="font-size:2rem;">${last.vibe}</div><strong>${last.label}</strong><br>${last.insights?.[0] || 'ارزیابی ثبت شد.'}</div>`;
-            setTimeout(() => { document.getElementById('evalModal').style.display = 'none'; renderDetail(currentEvalId); renderPeopleList(); updateStats(); }, 1800);
+            msgDiv.innerHTML = `<div style="background:#eaf7ec; border-radius:16px; padding:12px; text-align:center;"><strong style="font-size:1.1rem; color:${last.vibe==='سبز'?'#2ecc71':last.vibe==='زرد'?'#f1c40f':'#e74c3c'};">${last.label}</strong><br>${last.insights?.[0] || 'ارزیابی ثبت شد.'}<br><span style="font-size:0.7rem; color:#888; margin-top:6px; display:block;">پرونده به مدت ۳۰ روز قفل شد.</span></div>`;
+            setTimeout(() => { document.getElementById('evalModal').style.display = 'none'; renderDetail(currentEvalId); renderPeopleList(); updateStats(); }, 2500);
         }
     });
 
+    // یادداشت
+    let currentNoteId = null;
+    function openNoteModal(id) {
+        currentNoteId = id;
+        document.getElementById('noteText').value = '';
+        document.getElementById('noteModal').style.display = 'flex';
+    }
+    document.getElementById('saveNoteBtn')?.addEventListener('click', () => {
+        let text = document.getElementById('noteText').value.trim();
+        if(!text) { alert('لطفاً یادداشت را بنویسید'); return; }
+        let p = people.find(p => p.id === currentNoteId);
+        if(p) {
+            if(!p.notes) p.notes = [];
+            p.notes.push({ date: new Date().toISOString(), text: text });
+            saveData();
+            document.getElementById('noteModal').style.display = 'none';
+            renderDetail(currentNoteId);
+        }
+    });
+
+    document.getElementById('closeNoteModal')?.addEventListener('click', () => document.getElementById('noteModal').style.display = 'none');
     document.getElementById('closeEvalModal')?.addEventListener('click', () => document.getElementById('evalModal').style.display = 'none');
     document.getElementById('closeHelpModal')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'none');
     document.getElementById('closeHelpBtn')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'none');
     document.getElementById('helpMainBtn')?.addEventListener('click', () => document.getElementById('helpModal').style.display = 'flex');
+    
     document.getElementById('newPersonBtn')?.addEventListener('click', () => {
         let fname = prompt('نام (انگلیسی):'); if(!fname) return;
         let lname = prompt('نام خانوادگی (انگلیسی):'); if(!lname) return;
         let gender = confirm('جنسیت: OK=مرد (MR) / Cancel=زن (MS)') ? 'MR' : 'MS';
-        let relCode = prompt('کد رابطه (10=دوست، 721=عشق، 369=والدین):', '10');
-        let relText = prompt('توضیح رابطه:', 'دوست');
+        let relCode = prompt('کد رابطه (10=دوست، 390=رفیق، 721=یار، 369=والدین):', '390');
+        let relText = prompt('توضیح رابطه:', 'رفیق');
         addNewPerson(fname.toUpperCase(), lname.toUpperCase(), gender, relCode, relText);
     });
+    
     document.getElementById('doLoginBtn')?.addEventListener('click', () => {
         let name = document.getElementById('loginName').value.trim();
         if(!name) { alert('لطفاً نام خود را وارد کنید'); return; }
         currentUser = name;
+        currentAvatarSeed = name;
+        
+        let savedProfile = localStorage.getItem('HUMA_profile_' + name);
+        if(savedProfile) {
+            let profile = JSON.parse(savedProfile);
+            currentAvatarStyle = profile.style || 'gaze';
+            currentAvatarSeed = profile.seed || name;
+        }
+        
         document.getElementById('userNameDisplay').innerText = currentUser;
+        updateAvatarDisplay(currentAvatarStyle, currentAvatarSeed);
         document.getElementById('loginModal').style.display = 'none';
         loadData();
     });
-    document.getElementById('logoutBtn')?.addEventListener('click', () => { currentUser = null; people = []; selectedPersonId = null; document.getElementById('loginModal').style.display = 'flex'; });
+    
     window.addEventListener('click', (e) => { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; });
 </script>
 </body>
